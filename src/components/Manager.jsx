@@ -167,7 +167,7 @@ const Manager = () => {
         try {
             if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(text);
-                toast.success('Aalsii Lo Hogya Copy..📝', {
+                toast.success('Copied to clipboard successfully! 📋', {
                     position: "top-center",
                     autoClose: 2000
                 });
@@ -263,7 +263,7 @@ const Manager = () => {
 
         toast.info(
             <div className="flex flex-col gap-2">
-                <p>Delete kardu ye🤔🧐 {site}?</p>
+                <p>Are you sure you want to delete {site}? 🗑️</p>
                 <div className="flex gap-2 justify-center mt-2">
                     <button
                         onClick={() => {
@@ -743,7 +743,7 @@ const Manager = () => {
                             onKeyDown={handleKeyPress}
                             name="site"
                             type="text"
-                            placeholder="Platform (e.g.Jaha ka bhulgyee..🔑)"
+                            placeholder="Platform (e.g.Platform / Website Name 🔑)"
                             className={`w-full p-2 sm:p-3 text-sm sm:text-base border rounded-lg ${currentTheme.colors.borderHover} focus:outline-none`}
                         />
                         
@@ -754,7 +754,7 @@ const Manager = () => {
                                 onKeyDown={handleKeyPress}
                                 name="username"
                                 type="text"
-                                placeholder="Username or Email Jo yaad hai rkho😅..."
+                                placeholder="Enter Username or Email 👤"
                                 className={`w-full sm:w-1/2 p-2 sm:p-3 text-sm sm:text-base border rounded-lg ${currentTheme.colors.borderHover} focus:outline-none`}
                             />
                             <div className="relative w-full sm:w-1/2">
@@ -765,7 +765,7 @@ const Manager = () => {
                                     onKeyDown={handleKeyPress}
                                     name="password"
                                     type="password"
-                                    placeholder="Password Here 🍧"
+                                    placeholder="Password Here..🍨❄️"
                                     className={`w-full p-2 sm:p-3 text-sm sm:text-base border rounded-lg ${currentTheme.colors.borderHover} focus:outline-none`}
                                 />
                                 <button 
