@@ -1,25 +1,62 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import './App.css';
 import Navbar from './components/Navbar';
 import Manager from './components/Manager';
 import About from './components/About';
 import Contact from './components/Contact';
-import { ThemeProvider } from './components/ThemeContext'; 
 
 function App() {
-  return (
-    <ThemeProvider>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Manager />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  );
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: (
+        <>
+          <Navbar />
+          <Manager />
+          <Toaster 
+            position="top-center"
+            expand={true}
+            richColors
+            theme="light"
+          />
+        </>
+      ),
+    },
+    {
+      path: '/about',
+      element: (
+        <>
+          <Navbar />
+          <About />
+          <Toaster 
+            position="top-center"
+            expand={true}
+            richColors
+            theme="light"
+          />
+        </>
+      ),
+    },
+    {
+      path: '/contact',
+      element: (
+        <>
+          <Navbar />
+          <Contact />
+          <Toaster 
+            position="top-center"
+            expand={true}
+            richColors
+            theme="light"
+          />
+        </>
+      ),
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

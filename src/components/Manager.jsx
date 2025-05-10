@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from './ThemeContext';
 
@@ -64,9 +63,9 @@ const Manager = () => {
 
     const exportPasswords = () => {
         if (passwordArray.length === 0) {
-            toast.warning('No passwords to export! 🤔', {
-                position: "top-center",
-                autoClose: 3000
+            toast.warning('No passwords to export!', {
+                description: 'Add some passwords first',
+                duration: 3000
             });
             return;
         }
@@ -84,9 +83,10 @@ const Manager = () => {
             downloadLink.click();
             document.body.removeChild(downloadLink);
             URL.revokeObjectURL(url);
-            toast.success('Backup downloaded successfully! 💾', {
-                position: "top-center",
-                autoClose: 3000
+            toast.success('Backup downloaded successfully!', {
+                description: 'Your passwords have been exported',
+                icon: '💾',
+                duration: 3000
             });
         } catch (error) {
             console.error('Export failed:', error);
@@ -127,9 +127,10 @@ const Manager = () => {
                 const updatedArray = [...passwordArray, ...validatedData];
                 setPasswordArray(updatedArray);
                 localStorage.setItem("passwords", JSON.stringify(updatedArray));
-                toast.success(`${validatedData.length} passwords imported successfully! 🎉`, {
-                    position: "top-center",
-                    autoClose: 3000
+                toast.success('Passwords imported successfully!', {
+                    description: `${validatedData.length} passwords have been imported`,
+                    icon: '🎉',
+                    duration: 3000
                 });
             } catch (error) {
                 console.error('Import failed:', error);
@@ -167,9 +168,10 @@ const Manager = () => {
         try {
             if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(text);
-                toast.success('Copied to clipboard successfully! 📋', {
-                    position: "top-center",
-                    autoClose: 2000
+                toast.success('Copied to clipboard!', {
+                    description: 'Content has been copied',
+                    icon: '📋',
+                    duration: 2000
                 });
                 return;
             }
@@ -184,9 +186,10 @@ const Manager = () => {
             try {
                 document.execCommand('copy');
                 textArea.remove();
-                toast.success('Aalsii Lo Hogya Copy..📝', {
-                    position: "top-center",
-                    autoClose: 2000
+                toast.success('Copied to clipboard!', {
+                    description: 'Content has been copied',
+                    icon: '📋',
+                    duration: 2000
                 });
             } catch (error) {
                 console.error('Fallback copy failed:', error);
@@ -204,9 +207,10 @@ const Manager = () => {
 
     const savePassword = () => {
         if (!form.site || !form.username || !form.password) {
-            toast.warning('Please fill all fields! 🤨', {
-                position: "top-center",
-                autoClose: 3000
+            toast.warning('Please fill all fields!', {
+                description: 'All fields are required',
+                icon: '🤨',
+                duration: 3000
             });
             return;
         }
@@ -218,18 +222,20 @@ const Manager = () => {
             localStorage.setItem("passwords", JSON.stringify(updatedArray));
             setIsEditing(false);
             setEditIndex(null);
-            toast.success('Lo Hogya Update 😎', {
-                position: "top-center",
-                autoClose: 1500
+            toast.success('Password updated successfully!', {
+                description: 'Your changes have been saved',
+                icon: '✨',
+                duration: 1500
             });
         } else {
             const newPasswordEntry = { ...form, id: uuidv4() };
             const updatedArray = [...passwordArray, newPasswordEntry];
             setPasswordArray(updatedArray);
             localStorage.setItem("passwords", JSON.stringify(updatedArray));
-            toast.success('Password saved🤩 Ab BhulJaao😜! 🎉', {
-                position: "top-center",
-                autoClose: 1500
+            toast.success('Password saved successfully!', {
+                description: 'New password has been added',
+                icon: '🔒',
+                duration: 1500
             });
         }
         setForm({ id: '', site: "", username: "", password: "" });
@@ -244,52 +250,35 @@ const Manager = () => {
         setEditIndex(index);
         setForm(passwordArray[index]);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        toast.info('Hann ye Karlo Pehlee... 🧐📝', {
-            position: "top-center",
-            autoClose: 3000
+        toast.info('Editing password', {
+            description: 'Make your changes and save',
+            icon: '✏️',
+            duration: 3000
         });
     };
 
     const handleDelete = (index, site) => {
-        const confirmDelete = () => {
-            const newPasswordArray = passwordArray.filter((_, i) => i !== index);
-            setPasswordArray(newPasswordArray);
-            localStorage.setItem("passwords", JSON.stringify(newPasswordArray));
-            toast.success('Password deleted! 🗑️', {
-                position: "top-center",
-                autoClose: 2000
-            });
-        };
-
-        toast.info(
-            <div className="flex flex-col gap-2">
-                <p>Are you sure you want to delete {site}? 🗑️</p>
-                <div className="flex gap-2 justify-center mt-2">
-                    <button
-                        onClick={() => {
-                            confirmDelete();
-                            toast.dismiss();
-                        }}
-                        className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600"
-                    >
-                        Delete
-                    </button>
-                    <button
-                        onClick={() => toast.dismiss()}
-                        className="bg-gray-500 text-white px-4 py-1 rounded-md hover:bg-gray-600"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>,
-            {
-                position: "top-center",
-                autoClose: false,
-                closeButton: false,
-                closeOnClick: false,
-                draggable: false
+        toast.warning('Confirm deletion', {
+            description: `Are you sure you want to delete ${site}?`,
+            icon: '🗑️',
+            action: {
+                label: 'Delete',
+                onClick: () => {
+                    const newPasswordArray = passwordArray.filter((_, i) => i !== index);
+                    setPasswordArray(newPasswordArray);
+                    localStorage.setItem("passwords", JSON.stringify(newPasswordArray));
+                    toast.success('Password deleted!', {
+                        description: 'The password has been removed',
+                        icon: '🗑️',
+                        duration: 2000
+                    });
+                }
+            },
+            cancel: {
+                label: 'Cancel',
+                onClick: () => {}
             }
-        );
+        });
     };
 
     const handleKeyPress = (e) => {
