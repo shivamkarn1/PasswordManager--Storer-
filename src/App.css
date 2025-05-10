@@ -1,0 +1,28 @@
+/* Typing animation */
+@keyframes typing {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+.typing-animation {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    animation: typing 5s ease-in-out 0.5s forwards, blink 0.75s step-end infinite;
+}
+
+/* Blinking effect for text */
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}
+
+.animate-blink {
+    animation: blink 1s infinite;
+}

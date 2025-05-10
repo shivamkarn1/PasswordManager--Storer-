@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <!-- Background -->
+  <rect width="800" height="400" fill="black"/>
+  
+  <!-- Stylish underline -->
+  <rect x="100" y="250" width="600" height="4" fill="white" rx="2"/>
+  
+  <!-- Main Text with Modern Font and Enhanced Styling -->
+  <text x="400" y="200" 
+        font-family="Arial, Helvetica, sans-serif" 
+        font-size="120" 
+        font-weight="900"
+        text-anchor="middle"
+        fill="white"
+        style="letter-spacing: 8px; text-transform: uppercase;">
+    SHIVAM'S
+  </text>
+  
+  <!-- Subtle Accent Elements -->
+  <rect x="100" y="140" width="30" height="4" fill="white" rx="2"/>
+  <rect x="670" y="140" width="30" height="4" fill="white" rx="2"/>
+  
+  <!-- Updated Tagline -->
+  <text x="400" y="300"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="32"
+        font-weight="300"
+        text-anchor="middle"
+        fill="white"
+        style="letter-spacing: 4px;">
+    CODING LIFE
+  </text>
+</svg>
