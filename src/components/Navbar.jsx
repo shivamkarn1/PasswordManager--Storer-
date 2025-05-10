@@ -156,18 +156,15 @@ const Navbar = () => {
             {/* Mobile Menu */}
             <div 
                 className={`fixed inset-0 bg-gradient-to-b ${currentTheme.colors.navbarBg} backdrop-blur-lg
-                    transform ${currentTheme.animation.transition} duration-500 ease-in-out md:hidden
-                    ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}
+                    transform ${currentTheme.animation.transition} md:hidden
+                    ${isMenuOpen ? 'menu-enter-active' : 'menu-exit-active'}`}
                 style={{
-                    clipPath: isMenuOpen ? 
-                        'circle(150% at 100% 0)' : 
-                        'circle(0% at 100% 0)',
-                    transition: 'clip-path 0.5s ease-in-out, opacity 0.4s ease-in-out'
+                    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
             >
                 <div className={`flex flex-col items-center justify-center h-full gap-8 pb-20
-                    ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
-                    transition-all duration-500 delay-200`}
+                    ${isMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+                    transition-all duration-500 delay-100 transform`}
                 >
                     {/* Mobile theme selector */}
                     <div className="flex flex-col items-center gap-4">

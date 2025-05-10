@@ -303,23 +303,11 @@ const Manager = () => {
     const handleIconError = (e) => {
         console.warn('Icon failed to load:', e);
         // Optionally replace with a fallback icon
-        e.target.innerHTML = '👁️'; // Or any other fallback content
+        e.target.innerHTML = '👁️';
     };
 
     return (
         <div className={`min-h-screen flex flex-col ${currentTheme.colors.background} px-4 sm:px-6`}>
-            <ToastContainer
-                position="top-center"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme={currentTheme.id === 'cyberNight' ? 'dark' : 'colored'}
-            />
             
             {currentTheme.id === 'default' && (
                 <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]">

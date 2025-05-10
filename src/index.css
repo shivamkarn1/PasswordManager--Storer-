@@ -347,3 +347,83 @@
 .animate-crown-bounce {
   animation: crownBounce 3s ease-in-out infinite;
 }
+
+/* Enhanced Mobile Menu Animations */
+@keyframes menuEnter {
+  0% {
+    clip-path: circle(0% at calc(100% - 40px) 40px);
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  100% {
+    clip-path: circle(150% at calc(100% - 40px) 40px);
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes menuExit {
+  0% {
+    clip-path: circle(150% at calc(100% - 40px) 40px);
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+  100% {
+    clip-path: circle(0% at calc(100% - 40px) 40px);
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Add these classes for controlling the animations */
+.menu-enter-active {
+  animation: menuEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.menu-exit-active {
+  animation: menuExit 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Custom Sonner Toast Styles */
+[data-sonner-toaster] [data-sonner-toast] {
+  --normal-width: 400px !important;
+  --normal-height: auto !important;
+}
+
+[data-sonner-toast] [data-icon] {
+  font-size: 1.25rem;
+}
+
+[data-sonner-toast] [data-title] {
+  font-size: 1.1rem !important;
+  font-weight: 500;
+}
+
+[data-sonner-toast] [data-description] {
+  font-size: 0.95rem !important;
+  margin-top: 4px;
+}
+
+[data-sonner-toast] [data-button] {
+  font-size: 0.95rem !important;
+  padding: 8px 16px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  min-width: 80px !important;
+}
+
+[data-sonner-toast] [data-cancel] {
+  font-size: 0.95rem !important;
+  padding: 8px 16px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  min-width: 80px !important;
+}
