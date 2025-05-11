@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from './ThemeContext';
+import ExportPDF from './ExportPDF'; 
 
 const Manager = () => {
     const ref = useRef();
@@ -669,14 +670,8 @@ const Manager = () => {
                     </p>
                     
                     <div className={`flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mt-4 ${currentTheme.animation.enter}`}>
-                        <button
-                            onClick={exportPasswords}
-                            className={`flex items-center gap-2 px-5 py-2 ${currentTheme.colors.buttonBg} text-white 
-                                rounded-lg ${currentTheme.colors.buttonHover} ${currentTheme.animation.transition} 
-                                ${currentTheme.animation.button} shadow-md`}
-                        >
-                            <span>⬇️ Download Backup</span>
-                        </button>
+                        {/* Replace the Download Backup button with ExportPDF component */}
+                        <ExportPDF passwords={passwordArray} />
                         
                         <button
                             onClick={triggerFileInput}
