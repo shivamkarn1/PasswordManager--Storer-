@@ -427,3 +427,19 @@
   border-radius: 6px !important;
   min-width: 80px !important;
 }
+
+.rain-drop {
+  position: absolute;
+  pointer-events: none;
+  filter: blur(0.5px);
+}
+
+.grass-blade {
+  transform-origin: bottom center;
+  will-change: transform;
+}
+
+.cloud {
+  filter: url(#cloud-filter);
+}
+

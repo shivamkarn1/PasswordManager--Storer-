@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from './ThemeContext';
 
+
 const Navbar = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,6 +35,7 @@ const Navbar = () => {
 
     return (
         <div className="fixed w-full top-0 z-50">
+        
             {/* Backdrop Blur Effect */}
             <div className={`absolute inset-0 transition-all duration-500 
                 ${scrolled ? `bg-gradient-to-r ${currentTheme.colors.navbarBg} backdrop-blur-md` : 'bg-transparent'}`} />

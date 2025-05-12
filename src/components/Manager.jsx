@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from './ThemeContext';
 import ExportPDF from './ExportPDF'; 
+import AnimatedOpening from './AnimatedOpening';
 
 const Manager = () => {
     const ref = useRef();
@@ -13,6 +14,8 @@ const Manager = () => {
     const [editIndex, setEditIndex] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const { currentTheme } = useTheme();
+    const [showAnimation, setShowAnimation] = useState(true);
+
     const [visibilitySettings, setVisibilitySettings] = useState({
         site: true,
         username: true,
@@ -61,6 +64,10 @@ const Manager = () => {
         };
         checkCopyIcon();
     }, []);
+
+      if (showAnimation) {
+        return <AnimatedOpening onAnimationComplete={() => setShowAnimation(false)} />;
+    }
 
     const exportPasswords = () => {
         if (passwordArray.length === 0) {
