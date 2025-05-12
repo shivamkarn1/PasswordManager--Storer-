@@ -3,87 +3,88 @@ import html2pdf from 'html2pdf.js';
 import { toast } from 'sonner';
 import { useTheme } from './ThemeContext';
 
-// Array of dynamic design variations
+// Array of dynamic design variations with glassmorphism effects
 const designVariations = [
   {
-    headerGradient: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%)",
+    headerGradient: "linear-gradient(135deg, rgba(99, 102, 241, 0.85) 0%, rgba(139, 92, 246, 0.85) 50%, rgba(217, 70, 239, 0.85) 100%)",
     accentColor: "#8b5cf6",
-    securityNoticeBg: "linear-gradient(to right, #fff5f5 0%, #fff 100%)",
-    securityNoticeBorder: "linear-gradient(to bottom, #ef4444 0%, #f87171 100%)",
+    securityNoticeBg: "rgba(255, 255, 255, 0.7)",
+    securityNoticeBorder: "linear-gradient(to bottom, rgba(239, 68, 68, 0.8) 0%, rgba(248, 113, 113, 0.8) 100%)",
     securityNoticeColor: "#dc2626",
-    tableBg: "linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%)",
+    tableBg: "linear-gradient(90deg, rgba(79, 70, 229, 0.85) 0%, rgba(124, 58, 237, 0.85) 100%)",
+    tableRowBg1: "rgba(255, 255, 255, 0.6)",
+    tableRowBg2: "rgba(255, 255, 255, 0.8)",
     headerEmojis: ["🌐", "👤", "🔑"],
     vaultEmoji: "🔐",
     securityEmoji: "⚠️",
-    tipEmoji: "💡",
+    
     footerEmoji: "🛡️",
-    bestPracticesBg: "linear-gradient(to right, #f0f9ff 0%, #fff 100%)",
-    bestPracticesColor: "#075985",
-    footerBg: "linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)"
+   
+    footerBg: "rgba(243, 244, 246, 0.7)"
   },
   {
-    headerGradient: "linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)",
+    headerGradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.85) 50%, rgba(4, 120, 87, 0.85) 100%)",
     accentColor: "#059669",
-    securityNoticeBg: "linear-gradient(to right, #f0fdf4 0%, #fff 100%)",
-    securityNoticeBorder: "linear-gradient(to bottom, #16a34a 0%, #4ade80 100%)",
+    securityNoticeBg: "rgba(255, 255, 255, 0.7)",
+    securityNoticeBorder: "linear-gradient(to bottom, rgba(22, 163, 74, 0.8) 0%, rgba(74, 222, 128, 0.8) 100%)",
     securityNoticeColor: "#16a34a",
-    tableBg: "linear-gradient(90deg, #047857 0%, #10b981 100%)",
+    tableBg: "linear-gradient(90deg, rgba(4, 120, 87, 0.85) 0%, rgba(16, 185, 129, 0.85) 100%)",
+    tableRowBg1: "rgba(255, 255, 255, 0.6)",
+    tableRowBg2: "rgba(255, 255, 255, 0.8)",
     headerEmojis: ["🔗", "📧", "🔒"],
     vaultEmoji: "🏛️",
     securityEmoji: "🔰",
-    tipEmoji: "📝",
     footerEmoji: "🔰",
-    bestPracticesBg: "linear-gradient(to right, #ecfdf5 0%, #fff 100%)",
-    bestPracticesColor: "#065f46",
-    footerBg: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)"
+   
+    footerBg: "rgba(240, 253, 244, 0.7)"
   },
   {
-    headerGradient: "linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%)",
+    headerGradient: "linear-gradient(135deg, rgba(249, 115, 22, 0.85) 0%, rgba(234, 88, 12, 0.85) 50%, rgba(194, 65, 12, 0.85) 100%)",
     accentColor: "#ea580c",
-    securityNoticeBg: "linear-gradient(to right, #fff7ed 0%, #fff 100%)",
-    securityNoticeBorder: "linear-gradient(to bottom, #ea580c 0%, #fb923c 100%)",
+    securityNoticeBg: "rgba(255, 255, 255, 0.7)",
+    securityNoticeBorder: "linear-gradient(to bottom, rgba(234, 88, 12, 0.8) 0%, rgba(251, 146, 60, 0.8) 100%)",
     securityNoticeColor: "#c2410c",
-    tableBg: "linear-gradient(90deg, #c2410c 0%, #ea580c 100%)",
+    tableBg: "linear-gradient(90deg, rgba(194, 65, 12, 0.85) 0%, rgba(234, 88, 12, 0.85) 100%)",
+    tableRowBg1: "rgba(255, 255, 255, 0.6)",
+    tableRowBg2: "rgba(255, 255, 255, 0.8)",
     headerEmojis: ["📱", "🔤", "🗝️"],
     vaultEmoji: "💎",
     securityEmoji: "⚡",
-    tipEmoji: "📌",
     footerEmoji: "🔶",
-    bestPracticesBg: "linear-gradient(to right, #fff7ed 0%, #fff 100%)",
-    bestPracticesColor: "#9a3412",
-    footerBg: "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)"
+   
+    footerBg: "rgba(255, 247, 237, 0.7)"
   },
   {
-    headerGradient: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%)",
+    headerGradient: "linear-gradient(135deg, rgba(14, 165, 233, 0.85) 0%, rgba(2, 132, 199, 0.85) 50%, rgba(3, 105, 161, 0.85) 100%)",
     accentColor: "#0284c7",
-    securityNoticeBg: "linear-gradient(to right, #f0f9ff 0%, #fff 100%)",
-    securityNoticeBorder: "linear-gradient(to bottom, #0284c7 0%, #38bdf8 100%)",
+    securityNoticeBg: "rgba(255, 255, 255, 0.7)",
+    securityNoticeBorder: "linear-gradient(to bottom, rgba(2, 132, 199, 0.8) 0%, rgba(56, 189, 248, 0.8) 100%)",
     securityNoticeColor: "#0369a1",
-    tableBg: "linear-gradient(90deg, #0369a1 0%, #0ea5e9 100%)",
+    tableBg: "linear-gradient(90deg, rgba(3, 105, 161, 0.85) 0%, rgba(14, 165, 233, 0.85) 100%)",
+    tableRowBg1: "rgba(255, 255, 255, 0.6)",
+    tableRowBg2: "rgba(255, 255, 255, 0.8)",
     headerEmojis: ["🌊", "📩", "🔑"],
     vaultEmoji: "🗄️",
     securityEmoji: "🚨",
-    tipEmoji: "🔍",
     footerEmoji: "🌊",
-    bestPracticesBg: "linear-gradient(to right, #ecfeff 0%, #fff 100%)",
-    bestPracticesColor: "#0c4a6e",
-    footerBg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
+  
+    footerBg: "rgba(240, 249, 255, 0.7)"
   },
   {
-    headerGradient: "linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%)",
+    headerGradient: "linear-gradient(135deg, rgba(236, 72, 153, 0.85) 0%, rgba(219, 39, 119, 0.85) 50%, rgba(190, 24, 93, 0.85) 100%)",
     accentColor: "#db2777",
-    securityNoticeBg: "linear-gradient(to right, #fdf2f8 0%, #fff 100%)",
-    securityNoticeBorder: "linear-gradient(to bottom, #db2777 0%, #f472b6 100%)",
+    securityNoticeBg: "rgba(255, 255, 255, 0.7)",
+    securityNoticeBorder: "linear-gradient(to bottom, rgba(219, 39, 119, 0.8) 0%, rgba(244, 114, 182, 0.8) 100%)",
     securityNoticeColor: "#be185d",
-    tableBg: "linear-gradient(90deg, #be185d 0%, #ec4899 100%)",
+    tableBg: "linear-gradient(90deg, rgba(190, 24, 93, 0.85) 0%, rgba(236, 72, 153, 0.85) 100%)",
+    tableRowBg1: "rgba(255, 255, 255, 0.6)",
+    tableRowBg2: "rgba(255, 255, 255, 0.8)",
     headerEmojis: ["🔖", "👩‍💻", "🗂️"],
     vaultEmoji: "👑",
     securityEmoji: "🛑",
-    tipEmoji: "✨",
     footerEmoji: "💗",
-    bestPracticesBg: "linear-gradient(to right, #fdf2f8 0%, #fff 100%)",
-    bestPracticesColor: "#9d174d",
-    footerBg: "linear-gradient(135deg, #fdf2f8 0%, #fbcfe8 100%)"
+    
+    footerBg: "rgba(253, 242, 248, 0.7)"
   }
 ];
 
@@ -183,42 +184,36 @@ const ExportPDF = ({ passwords }) => {
       minute: '2-digit'
     });
     
-    // Generate unique background pattern elements
+    // Generate unique background pattern elements for glassmorphism effect
     let patternElements = '';
     if (patternId === 1) {
       patternElements = `
-        <div style="position: absolute; top: 20px; right: 20px; width: 100px; height: 100px; border-radius: 50%; opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; bottom: 50px; left: 10px; width: 150px; height: 150px; border-radius: 50%; opacity: 0.05; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; border-radius: 50%; opacity: 0.06; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; bottom: -100px; left: -100px; width: 400px; height: 400px; border-radius: 50%; opacity: 0.04; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; top: 40%; left: -30px; width: 120px; height: 120px; border-radius: 50%; opacity: 0.08; background: ${randomDesign.accentColor};"></div>
       `;
     } else if (patternId === 2) {
       patternElements = `
-        <div style="position: absolute; top: 10px; right: 10px; width: 200px; height: 3px; opacity: 0.2; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; top: 20px; right: 10px; width: 150px; height: 3px; opacity: 0.2; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; top: 30px; right: 10px; width: 100px; height: 3px; opacity: 0.2; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; bottom: 30px; left: 10px; width: 100px; height: 3px; opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; bottom: 20px; left: 10px; width: 150px; height: 3px; opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; bottom: 10px; left: 10px; width: 200px; height: 3px; opacity: 0.1; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; top: -30px; right: 10%; width: 200px; height: 200px; transform: rotate(45deg); opacity: 0.05; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; bottom: 20%; left: -50px; width: 250px; height: 250px; transform: rotate(30deg); opacity: 0.04; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; top: 60%; right: -30px; width: 150px; height: 150px; transform: rotate(15deg); opacity: 0.06; background: ${randomDesign.accentColor};"></div>
       `;
     } else if (patternId === 3) {
       patternElements = `
-        <div style="position: absolute; top: 20px; left: 20px; width: 20px; height: 20px; transform: rotate(45deg); opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; top: 60px; left: 40px; width: 15px; height: 15px; transform: rotate(45deg); opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; top: 90px; left: 20px; width: 10px; height: 10px; transform: rotate(45deg); opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; bottom: 20px; right: 20px; width: 20px; height: 20px; transform: rotate(45deg); opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; bottom: 60px; right: 40px; width: 15px; height: 15px; transform: rotate(45deg); opacity: 0.1; background: ${randomDesign.accentColor};"></div>
-        <div style="position: absolute; bottom: 90px; right: 20px; width: 10px; height: 10px; transform: rotate(45deg); opacity: 0.1; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, ${randomDesign.accentColor}, ${randomDesign.accentColor} 1px, transparent 1px, transparent 20px); opacity: 0.03;"></div>
+        <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; border-radius: 50%; opacity: 0.05; background: ${randomDesign.accentColor};"></div>
+        <div style="position: absolute; bottom: -50px; left: 20%; width: 200px; height: 200px; border-radius: 50%; opacity: 0.04; background: ${randomDesign.accentColor};"></div>
       `;
     } else if (patternId === 4) {
       patternElements = `
-        <div style="position: absolute; top: 10px; left: 0; width: 100%; height: 5px; opacity: 0.05; background: repeating-linear-gradient(90deg, ${randomDesign.accentColor}, ${randomDesign.accentColor} 10px, transparent 10px, transparent 20px);"></div>
-        <div style="position: absolute; bottom: 10px; left: 0; width: 100%; height: 5px; opacity: 0.05; background: repeating-linear-gradient(90deg, ${randomDesign.accentColor}, ${randomDesign.accentColor} 10px, transparent 10px, transparent 20px);"></div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 20%, ${randomDesign.accentColor} 0%, transparent 40%); opacity: 0.03;"></div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 80% 80%, ${randomDesign.accentColor} 0%, transparent 40%); opacity: 0.03;"></div>
       `;
     } else {
       patternElements = `
-        <div style="position: absolute; top: 20px; left: 20px; width: 40px; height: 40px; border-radius: 50%; border: 3px solid ${randomDesign.accentColor}; opacity: 0.1;"></div>
-        <div style="position: absolute; top: 80px; left: 40px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid ${randomDesign.accentColor}; opacity: 0.1;"></div>
-        <div style="position: absolute; bottom: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%; border: 3px solid ${randomDesign.accentColor}; opacity: 0.1;"></div>
-        <div style="position: absolute; bottom: 80px; right: 40px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid ${randomDesign.accentColor}; opacity: 0.1;"></div>
+        <div style="position: absolute; top: -50px; left: -50px; width: 40%; height: 40%; background: linear-gradient(45deg, ${randomDesign.accentColor}, transparent); opacity: 0.03;"></div>
+        <div style="position: absolute; bottom: -50px; right: -50px; width: 40%; height: 40%; background: linear-gradient(225deg, ${randomDesign.accentColor}, transparent); opacity: 0.03;"></div>
+        <div style="position: absolute; top: 30%; right: -30px; width: 150px; height: 150px; border-radius: 50%; opacity: 0.05; background: ${randomDesign.accentColor};"></div>
       `;
     }
     
@@ -226,11 +221,16 @@ const ExportPDF = ({ passwords }) => {
     const documentId = `VLT-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     
     content.innerHTML = `
-      <div style="padding: 40px; font-family: 'Segoe UI', Roboto, Arial, sans-serif; background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%); position: relative; overflow: hidden;">
+      <div style="padding: 40px; font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
+        background: linear-gradient(135deg, rgba(250, 250, 250, 0.9) 0%, rgba(245, 245, 245, 0.9) 100%); 
+        position: relative; overflow: hidden;">
         ${patternElements}
         
-        <!-- Header section with a modern gradient card look -->
-        <div style="text-align: center; margin-bottom: 35px; background: ${randomDesign.headerGradient}; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+        <!-- Header section with glassmorphic effect -->
+        <div style="text-align: center; margin-bottom: 35px; background: ${randomDesign.headerGradient}; 
+          border-radius: 16px; padding: 25px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2); 
+          backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); 
+          border: 1px solid rgba(255, 255, 255, 0.18);">
           <h1 style="color: white; font-size: 32px; margin: 0; font-weight: 700; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             ${randomDesign.vaultEmoji} Shivam's Vault
           </h1>
@@ -240,114 +240,129 @@ const ExportPDF = ({ passwords }) => {
           <div style="width: 60px; height: 4px; background-color: rgba(255,255,255,0.5); margin: 0 auto;"></div>
         </div>
 
-        <!-- Enhanced Security Notice with modern design -->
-        <div style="margin: 0 auto 35px; background: ${randomDesign.securityNoticeBg}; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex;">
-          <div style="width: 8px; background: ${randomDesign.securityNoticeBorder};"></div>
-          <div style="padding: 20px;">
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-              <span style="font-size: 24px; margin-right: 10px;">${randomDesign.securityEmoji}</span>
-              <h3 style="color: ${randomDesign.securityNoticeColor}; font-size: 18px; margin: 0; font-weight: 600;">SECURITY NOTICE</h3>
+        <!-- Glassmorphic Security Notice -->
+        <div style="margin: 0 auto 30px; background: ${randomDesign.securityNoticeBg}; 
+          border-radius: 12px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1); 
+          backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
+          border: 1px solid rgba(255, 255, 255, 0.2); overflow: hidden; display: flex;">
+          <div style="width: 5px; background: ${randomDesign.securityNoticeBorder};"></div>
+          <div style="padding: 16px 20px;">
+            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 18px; margin-right: 8px;">${randomDesign.securityEmoji}</span>
+              <h3 style="color: ${randomDesign.securityNoticeColor}; font-size: 16px; margin: 0; font-weight: 600;">SECURITY NOTICE</h3>
             </div>
-            <ul style="color: ${randomDesign.securityNoticeColor}; font-size: 14px; margin: 10px 0 0; padding-left: 20px; line-height: 1.5;">
+            <ul style="color: ${randomDesign.securityNoticeColor}; opacity: 0.9; font-size: 13px; margin: 5px 0 0; padding-left: 18px; line-height: 1.4;">
               ${randomSecurityNotice.map(notice => `<li>${notice}</li>`).join('')}
             </ul>
-            <div style="margin-top: 10px; background: rgba(0,0,0,0.03); border-radius: 6px; padding: 8px; font-size: 13px; color: ${randomDesign.securityNoticeColor};">
+            <div style="margin-top: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 8px; 
+              padding: 6px 10px; font-size: 12px; color: ${randomDesign.securityNoticeColor}; 
+              backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+              border: 1px solid rgba(255, 255, 255, 0.2);">
               Document ID: <strong>${documentId}</strong>
             </div>
           </div>
         </div>
 
-        <!-- Stylized table with multiple colors for categories -->
-        <table style="width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-radius: 12px; overflow: hidden;">
-          <thead>
-            <tr style="background: ${randomDesign.tableBg}; color: white;">
-              <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px;">
-                <div style="display: flex; align-items: center;">
-                  <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[0]}</span>Platform
-                </div>
-              </th>
-              <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px;">
-                <div style="display: flex; align-items: center;">
-                  <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[1]}</span>Username
-                </div>
-              </th>
-              <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px;">
-                <div style="display: flex; align-items: center;">
-                  <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[2]}</span>Password
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            ${passwords.map((item, index) => {
-              // Determine category color based on site name (keeping consistent branding for sites)
-              let categoryColor, categoryBg;
-              const siteLower = item.site.toLowerCase();
-              
-              if (siteLower.includes('google') || siteLower.includes('gmail')) {
-                categoryColor = '#ea4335';
-                categoryBg = 'rgba(234, 67, 53, 0.07)';
-              } else if (siteLower.includes('facebook') || siteLower.includes('meta')) {
-                categoryColor = '#1877f2';
-                categoryBg = 'rgba(24, 119, 242, 0.07)';
-              } else if (siteLower.includes('apple') || siteLower.includes('icloud')) {
-                categoryColor = '#555555';
-                categoryBg = 'rgba(85, 85, 85, 0.07)';
-              } else if (siteLower.includes('amazon')) {
-                categoryColor = '#ff9900';
-                categoryBg = 'rgba(255, 153, 0, 0.07)';
-              } else if (siteLower.includes('microsoft') || siteLower.includes('outlook')) {
-                categoryColor = '#00a4ef';
-                categoryBg = 'rgba(0, 164, 239, 0.07)';
-              } else if (siteLower.includes('twitter') || siteLower.includes('x.com')) {
-                categoryColor = '#1da1f2';
-                categoryBg = 'rgba(29, 161, 242, 0.07)';
-              } else if (siteLower.includes('instagram')) {
-                categoryColor = '#c13584';
-                categoryBg = 'rgba(193, 53, 132, 0.07)';
-              } else if (siteLower.includes('linkedin')) {
-                categoryColor = '#0077b5';
-                categoryBg = 'rgba(0, 119, 181, 0.07)';
-              } else if (index % 5 === 0) {
-                categoryColor = '#10b981'; // Green
-                categoryBg = 'rgba(16, 185, 129, 0.07)';
-              } else if (index % 5 === 1) {
-                categoryColor = '#6366f1'; // Indigo
-                categoryBg = 'rgba(99, 102, 241, 0.07)';
-              } else if (index % 5 === 2) {
-                categoryColor = '#f59e0b'; // Amber
-                categoryBg = 'rgba(245, 158, 11, 0.07)';
-              } else if (index % 5 === 3) {
-                categoryColor = '#8b5cf6'; // Purple
-                categoryBg = 'rgba(139, 92, 246, 0.07)';
-              } else {
-                categoryColor = '#ec4899'; // Pink
-                categoryBg = 'rgba(236, 72, 153, 0.07)';
-              }
-              
-              return `
-                <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#fafafa'}; border-bottom: 1px solid #f3f4f6;">
-                  <td style="padding: 14px 20px; font-size: 14px; color: ${categoryColor}; font-weight: 500; background: ${categoryBg}; border-right: 1px solid #f3f4f6;">${item.site}</td>
-                  <td style="padding: 14px 20px; font-size: 14px; color: #374151; border-right: 1px solid #f3f4f6;">${item.username}</td>
-                  <td style="padding: 14px 20px; font-size: 14px; font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace; color: #111827; background-color: #f9fafb; letter-spacing: 0.5px; font-weight: 500;">${item.password}</td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-
-        <!-- Password strength legend -->
-        <div style="margin: 0 auto 35px; background: ${randomDesign.bestPracticesBg}; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);">
-          <div style="font-weight: 600; color: ${randomDesign.bestPracticesColor}; margin-bottom: 10px; display: flex; align-items: center;">
-            <span style="font-size: 18px; margin-right: 8px;">${randomDesign.tipEmoji}</span>Password Best Practices
-          </div>
-          <ul style="color: ${randomDesign.bestPracticesColor}; font-size: 13px; margin: 0; padding-left: 25px; line-height: 1.6;">
-            ${randomSecurityTips.map(tip => `<li>${tip}</li>`).join('')}
-          </ul>
+        <!-- Glassmorphic table -->
+        <div style="margin-bottom: 30px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15); 
+          border-radius: 16px; overflow: hidden; backdrop-filter: blur(6px); 
+          -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.18);">
+          <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+            <thead>
+              <tr style="background: ${randomDesign.tableBg};">
+                <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; color: white;">
+                  <div style="display: flex; align-items: center;">
+                    <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[0]}</span>Platform
+                  </div>
+                </th>
+                <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; color: white;">
+                  <div style="display: flex; align-items: center;">
+                    <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[1]}</span>Username
+                  </div>
+                </th>
+                <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; color: white;">
+                  <div style="display: flex; align-items: center;">
+                    <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[2]}</span>Password
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              ${passwords.map((item, index) => {
+                // Determine category color based on site name (keeping consistent branding for sites)
+                let categoryColor, categoryBg;
+                const siteLower = item.site.toLowerCase();
+                
+                if (siteLower.includes('google') || siteLower.includes('gmail')) {
+                  categoryColor = '#ea4335';
+                  categoryBg = 'rgba(234, 67, 53, 0.05)';
+                } else if (siteLower.includes('facebook') || siteLower.includes('meta')) {
+                  categoryColor = '#1877f2';
+                  categoryBg = 'rgba(24, 119, 242, 0.05)';
+                } else if (siteLower.includes('apple') || siteLower.includes('icloud')) {
+                  categoryColor = '#555555';
+                  categoryBg = 'rgba(85, 85, 85, 0.05)';
+                } else if (siteLower.includes('amazon')) {
+                  categoryColor = '#ff9900';
+                  categoryBg = 'rgba(255, 153, 0, 0.05)';
+                } else if (siteLower.includes('microsoft') || siteLower.includes('outlook')) {
+                  categoryColor = '#00a4ef';
+                  categoryBg = 'rgba(0, 164, 239, 0.05)';
+                } else if (siteLower.includes('twitter') || siteLower.includes('x.com')) {
+                  categoryColor = '#1da1f2';
+                  categoryBg = 'rgba(29, 161, 242, 0.05)';
+                } else if (siteLower.includes('instagram')) {
+                  categoryColor = '#c13584';
+                  categoryBg = 'rgba(193, 53, 132, 0.05)';
+                } else if (siteLower.includes('linkedin')) {
+                  categoryColor = '#0077b5';
+                  categoryBg = 'rgba(0, 119, 181, 0.05)';
+                } else if (index % 5 === 0) {
+                  categoryColor = '#10b981'; // Green
+                  categoryBg = 'rgba(16, 185, 129, 0.05)';
+                } else if (index % 5 === 1) {
+                  categoryColor = '#6366f1'; // Indigo
+                  categoryBg = 'rgba(99, 102, 241, 0.05)';
+                } else if (index % 5 === 2) {
+                  categoryColor = '#f59e0b'; // Amber
+                  categoryBg = 'rgba(245, 158, 11, 0.05)';
+                } else if (index % 5 === 3) {
+                  categoryColor = '#8b5cf6'; // Purple
+                  categoryBg = 'rgba(139, 92, 246, 0.05)';
+                } else {
+                  categoryColor = '#ec4899'; // Pink
+                  categoryBg = 'rgba(236, 72, 153, 0.05)';
+                }
+                
+                return `
+                  <tr style="background: ${index % 2 === 0 ? randomDesign.tableRowBg1 : randomDesign.tableRowBg2};">
+                    <td style="padding: 14px 20px; font-size: 14px; color: ${categoryColor}; font-weight: 500; 
+                      background: ${categoryBg}; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); 
+                      border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                      ${item.site}
+                    </td>
+                    <td style="padding: 14px 20px; font-size: 14px; color: #374151; 
+                      border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                      ${item.username}
+                    </td>
+                    <td style="padding: 14px 20px; font-size: 14px; font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace; 
+                      color: #111827; background-color: rgba(249, 250, 251, 0.7); letter-spacing: 0.5px; font-weight: 500;
+                      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+                      border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                      ${item.password}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
         </div>
 
-        <!-- Footer with branding -->
-        <div style="margin-top: 30px; padding: 25px 20px; text-align: center; background: ${randomDesign.footerBg}; border-radius: 12px;">
+        <!-- Glassmorphic footer -->
+        <div style="margin-top: 30px; padding: 22px 20px; text-align: center; background: ${randomDesign.footerBg}; 
+          border-radius: 16px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1); 
+          backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); 
+          border: 1px solid rgba(255, 255, 255, 0.18);">
           <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
             <span style="font-size: 24px; margin-right: 10px;">${randomDesign.footerEmoji}</span>
             <p style="color: #4b5563; font-size: 16px; font-weight: 600; margin: 0;">
