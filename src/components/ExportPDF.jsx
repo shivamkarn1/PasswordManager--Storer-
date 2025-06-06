@@ -154,7 +154,7 @@ const securityNoticeVariants = [
 const ExportPDF = ({ passwords }) => {
   const { currentTheme } = useTheme();
 
-  const generatePDF = () => {
+  const generatePDF =async () => {
     if (!passwords || passwords.length === 0) {
       toast.warning('No passwords to export!', {
         description: 'Add some passwords first',
@@ -267,9 +267,9 @@ const ExportPDF = ({ passwords }) => {
         <div style="margin-bottom: 30px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15); 
           border-radius: 16px; overflow: hidden; backdrop-filter: blur(6px); 
           -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.18);">
-          <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+          <table style="width: 100%; border-collapse: separate; border-spacing: 0; page-break-inside: auto;">
             <thead>
-              <tr style="background: ${randomDesign.tableBg};">
+              <tr style="background: ${randomDesign.tableBg}; page-break-inside: avoid; page-break-after: avoid;">
                 <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; color: white;">
                   <div style="display: flex; align-items: center;">
                     <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[0]}</span>Platform
@@ -335,19 +335,21 @@ const ExportPDF = ({ passwords }) => {
                 }
                 
                 return `
-                  <tr style="background: ${index % 2 === 0 ? randomDesign.tableRowBg1 : randomDesign.tableRowBg2};">
-                    <td style="padding: 14px 20px; font-size: 14px; color: ${categoryColor}; font-weight: 500; 
-                      background: ${categoryBg}; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); 
+                  <tr style="background: ${index % 2 === 0 ? randomDesign.tableRowBg1 : randomDesign.tableRowBg2}; 
+                    page-break-inside: avoid;">
+                    <td style="padding: 12px 15px; font-size: 14px; color: ${categoryColor}; 
+                      font-weight: 500; background: ${categoryBg}; 
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.site}
                     </td>
-                    <td style="padding: 14px 20px; font-size: 14px; color: #374151; 
+                    <td style="padding: 12px 15px; font-size: 14px; color: #374151; 
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.username}
                     </td>
-                    <td style="padding: 14px 20px; font-size: 14px; font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace; 
-                      color: #111827; background-color: rgba(249, 250, 251, 0.7); letter-spacing: 0.5px; font-weight: 500;
-                      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+                    <td style="padding: 12px 15px; font-size: 13px; 
+                      font-family: monospace; color: #111827; 
+                      background-color: rgba(249, 250, 251, 0.7); 
+                      word-break: break-all; max-width: 200px;
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.password}
                     </td>
@@ -379,50 +381,58 @@ const ExportPDF = ({ passwords }) => {
       </div>
     `;
 
+    // 2. Update PDF generation options
     const opt = {
-      margin: [10, 10],
+      margin: [15, 15], // Increased margins
       filename: `vault_passwords_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 1.0 },
+      image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { 
-        scale: 3, 
+        scale: 2,  // Reduced scale for better performance
         logging: false, 
         useCORS: true,
         letterRendering: true,
-        allowTaint: false
+        allowTaint: false,
+        width: 792, // Standard A4 width in pixels
+        windowWidth: 792
       },
       jsPDF: { 
         unit: 'mm', 
         format: 'a4', 
         orientation: 'portrait',
         compress: true,
-        hotfixes: ["px_scaling"]
-      }
+        hotfixes: ["px_scaling"],
+        precision: 16
+      },
+      pagebreak: { mode: 'avoid-all' }
     };
 
-    // Show generating toast
-    const loadingToast = toast.loading('Generating your password backup...', {
+    // 3. Improve toast timing and handling
+    const loadingToast = toast.loading('Generating PDF...', {
       description: 'Please wait while we prepare your vault backup',
-      duration: 10000
+      duration: 3000  // Reduced duration
     });
     
-    html2pdf().set(opt).from(content).save()
-      .then(() => {
-        toast.dismiss(loadingToast);
-        toast.success('Vault backup created! ✅', {
-          description: 'Your passwords have been securely exported to PDF',
-          duration: 5000,
-          icon: '🔐'
-        });
-      })
-      .catch(error => {
-        toast.dismiss(loadingToast);
-        console.error('PDF generation failed:', error);
-        toast.error('Export failed', {
-          description: 'Unable to create your vault backup. Please try again.',
-          duration: 5000,
-          icon: '❌'
-        });
+    try {
+      await html2pdf()
+        .set(opt)
+        .from(content)
+        .save();
+        
+      toast.dismiss(loadingToast);
+      toast.success('PDF Created!', {
+        description: 'Your passwords have been exported',
+        duration: 2000,
+        icon: '🔐'
       });
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      console.error('PDF generation failed:', error);
+      toast.error('Export failed', {
+        description: 'Please try again',
+        duration: 2000,
+        icon: '❌' 
+      });
+    }
   };
 
   return (
