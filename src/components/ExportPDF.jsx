@@ -267,20 +267,27 @@ const ExportPDF = ({ passwords }) => {
         <div style="margin-bottom: 30px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15); 
           border-radius: 16px; overflow: hidden; backdrop-filter: blur(6px); 
           -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.18);">
-          <table style="width: 100%; border-collapse: separate; border-spacing: 0; page-break-inside: auto;">
+          <table style="width: 100%; border-collapse: separate; border-spacing: 0; 
+            page-break-inside: auto; font-size: calc(8px + 1vw);">
             <thead>
-              <tr style="background: ${randomDesign.tableBg}; page-break-inside: avoid; page-break-after: avoid;">
-                <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; color: white;">
+              <tr style="background: ${randomDesign.tableBg}; page-break-inside: avoid;">
+                <th style="padding: 8px 10px; text-align: left; font-weight: 600; 
+                  font-size: calc(10px + 1vw); letter-spacing: 0.5px; color: white; 
+                  white-space: nowrap;">
                   <div style="display: flex; align-items: center;">
                     <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[0]}</span>Platform
                   </div>
                 </th>
-                <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; color: white;">
+                <th style="padding: 8px 10px; text-align: left; font-weight: 600; 
+                  font-size: calc(10px + 1vw); letter-spacing: 0.5px; color: white; 
+                  white-space: nowrap;">
                   <div style="display: flex; align-items: center;">
                     <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[1]}</span>Username
                   </div>
                 </th>
-                <th style="padding: 16px 20px; text-align: left; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; color: white;">
+                <th style="padding: 8px 10px; text-align: left; font-weight: 600; 
+                  font-size: calc(10px + 1vw); letter-spacing: 0.5px; color: white; 
+                  white-space: nowrap;">
                   <div style="display: flex; align-items: center;">
                     <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[2]}</span>Password
                   </div>
@@ -337,19 +344,21 @@ const ExportPDF = ({ passwords }) => {
                 return `
                   <tr style="background: ${index % 2 === 0 ? randomDesign.tableRowBg1 : randomDesign.tableRowBg2}; 
                     page-break-inside: avoid;">
-                    <td style="padding: 12px 15px; font-size: 14px; color: ${categoryColor}; 
+                    <td style="padding: 8px 10px; font-size: calc(8px + 0.8vw); 
+                      white-space: normal; word-break: break-word; max-width: 25vw;
+                      color: ${categoryColor}; 
                       font-weight: 500; background: ${categoryBg}; 
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.site}
                     </td>
-                    <td style="padding: 12px 15px; font-size: 14px; color: #374151; 
+                    <td style="padding: 8px 10px; font-size: calc(8px + 0.8vw);
+                      white-space: normal; word-break: break-word; max-width: 30vw;
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.username}
                     </td>
-                    <td style="padding: 12px 15px; font-size: 13px; 
-                      font-family: monospace; color: #111827; 
+                    <td style="padding: 8px 10px; font-size: calc(8px + 0.8vw);
+                      font-family: monospace; word-break: break-all; max-width: 45vw;
                       background-color: rgba(249, 250, 251, 0.7); 
-                      word-break: break-all; max-width: 200px;
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.password}
                     </td>
@@ -381,19 +390,19 @@ const ExportPDF = ({ passwords }) => {
       </div>
     `;
 
-    // 2. Update PDF generation options
+    // Update the PDF generation options
     const opt = {
-      margin: [15, 15], // Increased margins
+      margin: [10, 10], // Reduced margins for mobile
       filename: `vault_passwords_${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { 
-        scale: 2,  // Reduced scale for better performance
+        scale: 1,  // Reduced scale for better mobile performance
         logging: false, 
         useCORS: true,
         letterRendering: true,
         allowTaint: false,
-        width: 792, // Standard A4 width in pixels
-        windowWidth: 792
+        width: undefined, // Let it be responsive
+        windowWidth: undefined
       },
       jsPDF: { 
         unit: 'mm', 
@@ -403,7 +412,12 @@ const ExportPDF = ({ passwords }) => {
         hotfixes: ["px_scaling"],
         precision: 16
       },
-      pagebreak: { mode: 'avoid-all' }
+      pagebreak: { 
+        mode: 'css',
+        before: '.page-break-before',
+        after: '.page-break-after',
+        avoid: '.page-break-avoid'
+      }
     };
 
     // 3. Improve toast timing and handling
