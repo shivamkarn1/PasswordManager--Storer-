@@ -221,9 +221,9 @@ const ExportPDF = ({ passwords }) => {
     const documentId = `VLT-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     
     content.innerHTML = `
-      <div style="padding: 40px; font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
+      <div style="padding: 20px; font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
         background: linear-gradient(135deg, rgba(250, 250, 250, 0.9) 0%, rgba(245, 245, 245, 0.9) 100%); 
-        position: relative; overflow: hidden;">
+        position: relative; overflow: hidden; max-width: 800px; margin: 0 auto;">
         ${patternElements}
         
         <!-- Header section with glassmorphic effect -->
@@ -268,25 +268,25 @@ const ExportPDF = ({ passwords }) => {
           border-radius: 16px; overflow: hidden; backdrop-filter: blur(6px); 
           -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.18);">
           <table style="width: 100%; border-collapse: separate; border-spacing: 0; 
-            page-break-inside: auto; font-size: calc(8px + 1vw);">
+            page-break-inside: auto; font-size: 12px;">
             <thead>
               <tr style="background: ${randomDesign.tableBg}; page-break-inside: avoid;">
-                <th style="padding: 8px 10px; text-align: left; font-weight: 600; 
-                  font-size: calc(10px + 1vw); letter-spacing: 0.5px; color: white; 
+                <th style="padding: 10px 12px; text-align: left; font-weight: 600; 
+                  font-size: 14px; letter-spacing: 0.5px; color: white; 
                   white-space: nowrap;">
                   <div style="display: flex; align-items: center;">
                     <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[0]}</span>Platform
                   </div>
                 </th>
-                <th style="padding: 8px 10px; text-align: left; font-weight: 600; 
-                  font-size: calc(10px + 1vw); letter-spacing: 0.5px; color: white; 
+                <th style="padding: 10px 12px; text-align: left; font-weight: 600; 
+                  font-size: 14px; letter-spacing: 0.5px; color: white; 
                   white-space: nowrap;">
                   <div style="display: flex; align-items: center;">
                     <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[1]}</span>Username
                   </div>
                 </th>
-                <th style="padding: 8px 10px; text-align: left; font-weight: 600; 
-                  font-size: calc(10px + 1vw); letter-spacing: 0.5px; color: white; 
+                <th style="padding: 10px 12px; text-align: left; font-weight: 600; 
+                  font-size: 14px; letter-spacing: 0.5px; color: white; 
                   white-space: nowrap;">
                   <div style="display: flex; align-items: center;">
                     <span style="font-size: 18px; margin-right: 8px;">${randomDesign.headerEmojis[2]}</span>Password
@@ -344,20 +344,19 @@ const ExportPDF = ({ passwords }) => {
                 return `
                   <tr style="background: ${index % 2 === 0 ? randomDesign.tableRowBg1 : randomDesign.tableRowBg2}; 
                     page-break-inside: avoid;">
-                    <td style="padding: 8px 10px; font-size: calc(8px + 0.8vw); 
-                      white-space: normal; word-break: break-word; max-width: 25vw;
-                      color: ${categoryColor}; 
-                      font-weight: 500; background: ${categoryBg}; 
+                    <td style="padding: 10px 12px; font-size: 12px; 
+                      white-space: normal; word-break: break-word;
+                      color: ${categoryColor}; font-weight: 500; background: ${categoryBg}; 
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.site}
                     </td>
-                    <td style="padding: 8px 10px; font-size: calc(8px + 0.8vw);
-                      white-space: normal; word-break: break-word; max-width: 30vw;
+                    <td style="padding: 10px 12px; font-size: 12px;
+                      white-space: normal; word-break: break-word;
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.username}
                     </td>
-                    <td style="padding: 8px 10px; font-size: calc(8px + 0.8vw);
-                      font-family: monospace; word-break: break-all; max-width: 45vw;
+                    <td style="padding: 10px 12px; font-size: 12px;
+                      font-family: 'Courier New', monospace; word-break: break-all;
                       background-color: rgba(249, 250, 251, 0.7); 
                       border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
                       ${item.password}
@@ -390,30 +389,32 @@ const ExportPDF = ({ passwords }) => {
       </div>
     `;
 
-    // Update the PDF generation options
+    // Update the PDF generation options with these improved settings
     const opt = {
-      margin: [10, 10], // Reduced margins for mobile
+      margin: [10, 10],
       filename: `vault_passwords_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
+      image: { type: 'jpeg', quality: 1.0 },  // Increased quality to maximum
       html2canvas: { 
-        scale: 1,  // Reduced scale for better mobile performance
+        scale: 2,  // Increased scale for better resolution
         logging: false, 
         useCORS: true,
         letterRendering: true,
         allowTaint: false,
-        width: undefined, // Let it be responsive
-        windowWidth: undefined
+        dpi: 300,  // Higher DPI for better quality
+        x: 0,
+        y: 0
       },
       jsPDF: { 
         unit: 'mm', 
         format: 'a4', 
         orientation: 'portrait',
         compress: true,
-        hotfixes: ["px_scaling"],
-        precision: 16
+        precision: 16,
+        putOnlyUsedFonts: true,
+        hotfixes: ["px_scaling"]
       },
       pagebreak: { 
-        mode: 'css',
+        mode: ['avoid-all', 'css', 'legacy'],
         before: '.page-break-before',
         after: '.page-break-after',
         avoid: '.page-break-avoid'
