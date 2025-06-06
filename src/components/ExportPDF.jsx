@@ -2,6 +2,23 @@ import React from 'react';
 import html2pdf from 'html2pdf.js';
 import { toast } from 'sonner';
 import { useTheme } from './ThemeContext';
+const styleElement = document.createElement('style');
+styleElement.textContent = `
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+  
+  .animate-ripple {
+    animation: ripple 0.8s ease-out;
+  }
+`;
 
 // Array of dynamic design variations with glassmorphism effects
 const designVariations = [
@@ -154,8 +171,16 @@ const securityNoticeVariants = [
 const ExportPDF = ({ passwords }) => {
   const { currentTheme } = useTheme();
 
-  const generatePDF =async () => {
+  // Update the generatePDF function for better toast feedback
+  const generatePDF = async () => {
+    // Show immediate feedback toast when button is clicked
+    const loadingToast = toast.loading('Starting export...', {
+      description: 'Preparing your password vault',
+      duration: 10000 // Longer duration to prevent disappearing
+    });
+    
     if (!passwords || passwords.length === 0) {
+      toast.dismiss(loadingToast);
       toast.warning('No passwords to export!', {
         description: 'Add some passwords first',
         duration: 3000
@@ -422,9 +447,9 @@ const ExportPDF = ({ passwords }) => {
     };
 
     // 3. Improve toast timing and handling
-    const loadingToast = toast.loading('Generating PDF...', {
-      description: 'Please wait while we prepare your vault backup',
-      duration: 3000  // Reduced duration
+    const processingToast = toast.loading('Generating PDF...', {
+      description: 'Converting your passwords to PDF format',
+      duration: 10000
     });
     
     try {
@@ -433,18 +458,18 @@ const ExportPDF = ({ passwords }) => {
         .from(content)
         .save();
         
-      toast.dismiss(loadingToast);
+      toast.dismiss(processingToast);
       toast.success('PDF Created!', {
-        description: 'Your passwords have been exported',
-        duration: 2000,
+        description: 'Your passwords have been exported successfully',
+        duration: 3000,
         icon: '🔐'
       });
     } catch (error) {
-      toast.dismiss(loadingToast);
+      toast.dismiss(processingToast);
       console.error('PDF generation failed:', error);
       toast.error('Export failed', {
-        description: 'Please try again',
-        duration: 2000,
+        description: 'Please try again later',
+        duration: 3000,
         icon: '❌' 
       });
     }
@@ -453,14 +478,33 @@ const ExportPDF = ({ passwords }) => {
   return (
     <button
       onClick={generatePDF}
-      className={`flex items-center gap-2 px-5 py-2.5 ${currentTheme.colors.buttonBg} text-white 
-        rounded-lg ${currentTheme.colors.buttonHover} ${currentTheme.animation.transition} 
-        ${currentTheme.animation.button} shadow-md hover:shadow-lg`}
+      className={`group relative flex items-center gap-2 px-5 py-2.5 
+        ${currentTheme.colors.buttonBg} text-white rounded-lg 
+        ${currentTheme.colors.buttonHover} ${currentTheme.animation.transition} 
+        ${currentTheme.animation.button} shadow-md hover:shadow-lg
+        active:scale-95 active:shadow-inner active:brightness-90
+        transition-all duration-150 ease-out
+        hover:brightness-110 focus:ring-2 focus:ring-offset-2 
+        focus:ring-opacity-50 focus:ring-${currentTheme.colors.focusRing}
+        overflow-hidden`}
       aria-label="Export passwords to PDF"
     >
-      <span className="flex items-center">
-        <span className="mr-2 text-lg">🔐</span>
-        <span>Export Passwords [PDF]</span>
+      {/* Click animation overlay */}
+      <span className="absolute inset-0 bg-white opacity-0 group-active:opacity-20 
+        group-active:scale-90 transition-all duration-300 rounded-lg 
+        pointer-events-none z-0"></span>
+        
+      {/* Ripple effect on click */}
+      <span className="absolute inset-0 group-active:animate-ripple 
+        bg-white opacity-0 group-active:opacity-10 rounded-full 
+        transform scale-0 group-active:scale-100 origin-center 
+        transition-all duration-500 ease-out pointer-events-none z-0"></span>
+        
+      <span className="flex items-center relative z-10">
+        <span className="mr-2 text-lg animate-pulse group-active:animate-ping">🔐</span>
+        <span className="font-medium group-active:text-white">Export Passwords [PDF]</span>
+        <span className="absolute -right-1 -top-1 w-2 h-2 rounded-full 
+          bg-yellow-400 animate-ping group-active:bg-green-400"></span>
       </span>
     </button>
   );
