@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from './ThemeContext';
+import { UserButton } from "@clerk/clerk-react";
 
 
 const Navbar = () => {
@@ -48,6 +49,7 @@ const Navbar = () => {
                     <div className="flex items-center gap-3 group">
                         <span className={`text-3xl sm:text-4xl transform group-hover:scale-110 ${currentTheme.animation.transition} cursor-pointer`}>
                             🔐
+                            <UserButton/>
                         </span>
                         <div className="flex flex-col">
                             <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold 
