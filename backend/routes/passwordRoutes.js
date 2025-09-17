@@ -31,8 +31,8 @@ router.post('/', async (req, res) => {
   try {
     const { website, username, password } = req.body;
 
-    console.log('🔐 Saving password for user:', req.user.id);
-    console.log('📊 Data:', { website, username, passwordLength: password.length });
+    console.log('Saving password for user:', req.user.id);
+    console.log('Data:', { website, username, passwordLength: password.length });
 
     if (!website || !username || !password) {
       return res.status(400).json({
@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
 
     const savedPassword = await newPassword.save();
 
-    console.log('✅ Password saved! ID:', savedPassword._id);
+    console.log('Password saved! ID:', savedPassword._id);
 
     res.status(201).json({
       success: true,
