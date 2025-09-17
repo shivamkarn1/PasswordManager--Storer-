@@ -2,444 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .mycontainer {
-    @apply container;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
 
-/* Default fade-in animation */
-@keyframes fadeIn {
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Remove all the previous animations and keep only essential ones */
+@layer utilities {
+  .animate-fadeInUp {
+    animation: fadeInUp 0.4s ease-out;
+  }
+}
+
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-.animate-fade-in {
-  animation: fadeIn 0.8s ease-out forwards;
-}
-
-/* Frostbyte fade-in animation with blur */
-@keyframes frostFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-5px);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-.animate-frost-fade-in {
-  animation: frostFadeIn 1.2s ease-in-out forwards;
-}
-
-/* Sunset slide-up animation with bounce */
-@keyframes sunsetSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  70% {
-    transform: translateY(-5px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-sunset-slide-up {
-  animation: sunsetSlideUp 1s ease-out forwards;
-}
-
-/* CyberNight pulse animation */
-@keyframes cyberPulse {
-  0% {
-    opacity: 0;
-    box-shadow: 0 0 0 0 rgba(20, 184, 166, 0);
-  }
-  50% {
-    opacity: 0.8;
-    box-shadow: 0 0 0 5px rgba(20, 184, 166, 0.3);
-  }
-  100% {
-    opacity: 1;
-    box-shadow: 0 0 0 0 rgba(20, 184, 166, 0);
-  }
-}
-.animate-cyber-pulse {
-  animation: cyberPulse 1.5s ease forwards;
-}
-
-/* Floating snowflakes for Frostbyte theme */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-5px) rotate(2deg);
-  }
-  50% {
-    transform: translateY(0) rotate(0deg);
-  }
-  75% {
-    transform: translateY(5px) rotate(-2deg);
-  }
-}
-.animate-float {
-  animation: float 8s ease-in-out infinite;
-}
-
-/* Typewriter effect for CyberNight theme */
-@keyframes typewriter {
-  0% { width: 0; }
-  100% { width: 100%; }
-}
-.typewriter {
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid #14b8a6;
-  animation: 
-    typewriter 3s steps(40) 0.5s forwards,
-    blink 1s step-end infinite;
-}
-@keyframes blink {
-  from, to { border-color: transparent }
-  50% { border-color: #14b8a6; }
-}
-
-/* Red Roses bloom animation */
-@keyframes rosesBloom {
-  0% {
-    opacity: 0;
-    transform: scale(0.9) rotate(-2deg);
-  }
-  60% {
-    transform: scale(1.03) rotate(1deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(0);
-  }
-}
-.animate-roses-bloom {
-  animation: rosesBloom 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* Subtle pulse animation for buttons */
-@keyframes subtlePulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-  }
-  50% {
-    box-shadow: 0 0 10px 2px rgba(220, 38, 38, 0.2);
-  }
-}
-.animate-subtle-pulse {
-  animation: subtlePulse 3s infinite ease-in-out;
-}
-
-/* Royal Red Gold reveal animation */
-@keyframes royalReveal {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
-  }
-  30% {
-    box-shadow: 0 8px 20px -4px rgba(234, 179, 8, 0.3);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: 0 6px 12px -2px rgba(234, 179, 8, 0.2);
-  }
-}
-.animate-royal-reveal {
-  animation: royalReveal 1.2s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
-}
-
-/* Raining theme animations */
-@keyframes raindropFall {
-  0% {
-    opacity: 0;
-    transform: translateY(-15px);
-    filter: blur(1px);
-  }
-  70% {
-    opacity: 0.9;
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-.animate-raindrop-fall {
-  animation: raindropFall 1.1s ease-in forwards;
-}
-
-@keyframes rainRipple {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-  }
-  50% {
-    box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.15);
-  }
-}
-.animate-rain-ripple {
-  animation: rainRipple 4s infinite ease-in-out;
-}
-
-/* Floating petals for Red Roses theme */
-@keyframes petalFloat {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  25% {
-    transform: translate(5px, -5px) rotate(5deg);
-  }
-  50% {
-    transform: translate(0, -10px) rotate(0deg);
-  }
-  75% {
-    transform: translate(-5px, -5px) rotate(-5deg);
-  }
-}
-.animate-petal-float {
-  animation: petalFloat 8s ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-/* Gold shimmer for Royal Red Gold theme */
-@keyframes goldShimmer {
-  0% {
-    background-position: -100% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-.gold-shimmer {
-  background: linear-gradient(90deg, rgba(234, 179, 8, 0), rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0));
-  background-size: 200% 100%;
-  animation: goldShimmer 4s linear infinite;
-}
-
-/* Raining theme - falling raindrops, thunder flash */
-@keyframes rainFall {
-  0% {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateY(120vh);
-    opacity: 0;
-  } 
-}
-.animate-rain-fall {
-  animation: rainFall 2s linear infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-/* Thunder flash animation */
-@keyframes thunderFlash {
-  0%, 100% {
-    opacity: 0;
-  }
-  0.5%, 1.5% {
-    opacity: 0.8;
-  }
-  0.7%, 1.7% {
-    opacity: 0;
-  }
-  5% {
-    opacity: 0.3;
-  }
-  5.5% {
-    opacity: 0;
-  }
-}
-.animate-thunder {
-  animation: thunderFlash 10s infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-/* Red Roses theme - Floating hearts animation */
-@keyframes heartFloat {
-  0% {
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateY(-15px) rotate(5deg) scale(1.05);
-  }
-  50% {
-    transform: translateY(-25px) rotate(0deg) scale(1);
-  }
-  75% {
-    transform: translateY(-15px) rotate(-5deg) scale(0.95);
-  }
-  100% {
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-}
-.animate-heart-float {
-  animation: heartFloat 6s ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-/* Frostbyte theme - Snowflake animations */
-@keyframes snowfall {
-  0% {
-    transform: translateY(-10px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-.animate-snowfall {
-  animation: snowfall 8s linear infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-@keyframes snowFloat {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  25% {
-    transform: translate(10px, -5px) rotate(15deg);
-  }
-  50% {
-    transform: translate(0, -10px) rotate(0deg);
-  }
-  75% {
-    transform: translate(-10px, -5px) rotate(-15deg);
-  }
-}
-.animate-snow-float {
-  animation: snowFloat 8s ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-/* Gold crown bounce for Royal Red Gold theme */
-@keyframes crownBounce {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-15px) rotate(10deg);
-  }
-}
-.animate-crown-bounce {
-  animation: crownBounce 3s ease-in-out infinite;
-}
-
-/* Enhanced Mobile Menu Animations */
-@keyframes menuEnter {
-  0% {
-    clip-path: circle(0% at calc(100% - 40px) 40px);
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(0.95);
-  }
-  100% {
-    clip-path: circle(150% at calc(100% - 40px) 40px);
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes menuExit {
-  0% {
-    clip-path: circle(150% at calc(100% - 40px) 40px);
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.05);
-  }
-  100% {
-    clip-path: circle(0% at calc(100% - 40px) 40px);
-    opacity: 0;
-    transform: scale(0.9);
-  }
-}
-
-/* Add these classes for controlling the animations */
-.menu-enter-active {
-  animation: menuEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.menu-exit-active {
-  animation: menuExit 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* Custom Sonner Toast Styles */
-[data-sonner-toaster] [data-sonner-toast] {
-  --normal-width: 400px !important;
-  --normal-height: auto !important;
-}
-
-[data-sonner-toast] [data-icon] {
-  font-size: 1.25rem;
-}
-
-[data-sonner-toast] [data-title] {
-  font-size: 1.1rem !important;
-  font-weight: 500;
-}
-
-[data-sonner-toast] [data-description] {
-  font-size: 0.95rem !important;
-  margin-top: 4px;
-}
-
-[data-sonner-toast] [data-button] {
-  font-size: 0.95rem !important;
-  padding: 8px 16px !important;
-  font-weight: 500 !important;
-  border-radius: 6px !important;
-  min-width: 80px !important;
-}
-
-[data-sonner-toast] [data-cancel] {
-  font-size: 0.95rem !important;
-  padding: 8px 16px !important;
-  font-weight: 500 !important;
-  border-radius: 6px !important;
-  min-width: 80px !important;
-}
-
-.rain-drop {
-  position: absolute;
-  pointer-events: none;
-  filter: blur(0.5px);
-}
-
-.grass-blade {
-  transform-origin: bottom center;
-  will-change: transform;
-}
-
-.cloud {
-  filter: url(#cloud-filter);
 }
 

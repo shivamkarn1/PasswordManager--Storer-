@@ -1,231 +1,222 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useTheme } from './ThemeContext';
-import { UserButton } from "@clerk/clerk-react";
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
+function Navbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-const Navbar = () => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
-    const { currentTheme, changeTheme, themes } = useTheme();
+  const handleHomeClick = () => {
+    setIsRefreshing(true);
+    
+    // Add a subtle animation delay before navigating
+    setTimeout(() => {
+      navigate('/');
+      setIsRefreshing(false);
+    }, 300);
+    
+    setIsMobileMenuOpen(false);
+  };
 
-    useEffect(() => {
-        const timer = setTimeout(() => setIsVisible(true), 300);
-        
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-        
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            clearTimeout(timer);
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+  const navigateToPage = (page) => {
+    navigate(`/${page}`);
+    setIsMobileMenuOpen(false);
+  };
 
-    const toggleThemeMenu = () => {
-        setIsThemeMenuOpen(!isThemeMenuOpen);
-    };
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
-    const handleThemeChange = (themeId) => {
-        changeTheme(themeId);
-        setIsThemeMenuOpen(false);
-    };
+  // Helper function to check if a route is active
+  const isActiveRoute = (path) => {
+    return location.pathname === path;
+  };
 
-    return (
-        <div className="fixed w-full top-0 z-50">
-        
-            {/* Backdrop Blur Effect */}
-            <div className={`absolute inset-0 transition-all duration-500 
-                ${scrolled ? `bg-gradient-to-r ${currentTheme.colors.navbarBg} backdrop-blur-md` : 'bg-transparent'}`} />
-
-            {/* Navbar */}
-            <nav className={`relative transition-all duration-500 bg-gradient-to-r ${currentTheme.colors.navbarBg}
-                ${scrolled ? 'py-2' : 'py-4'}`}>
-                <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
-                    {/* Logo Section */}
-                    <div className="flex items-center gap-3 group">
-                        <span className={`text-3xl sm:text-4xl transform group-hover:scale-110 ${currentTheme.animation.transition} cursor-pointer`}>
-                            🔐
-                            <UserButton/>
-                        </span>
-                        <div className="flex flex-col">
-                            <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold 
-                                text-transparent bg-clip-text bg-gradient-to-r ${currentTheme.colors.primary}
-                                ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'} 
-                                ${currentTheme.animation.transition} typing-animation`}>
-                                Shivam's Vault
-                                <span className={`inline-block ml-2 transform hover:scale-110 ${currentTheme.animation.transition}`}>🛅</span>
-                            </h1>
-                            <p className={`text-sm sm:text-base text-${currentTheme.colors.accent}
-                                ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}
-                                ${currentTheme.animation.transition} delay-200 animate-blink`}>
-                                By Shivam Karn's Creations
-                                <span className="inline-block ml-1 animate-bounce">🐧🍫</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center gap-8">
-                        {/* Theme selector */}
-                        <div className="relative">
-                            <button 
-                                onClick={toggleThemeMenu}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full 
-                                    bg-${currentTheme.colors.buttonBg} text-white
-                                    ${currentTheme.animation.transition} ${currentTheme.animation.button}`}
-                            >
-                                <span>{currentTheme.icon}</span>
-                                <span>{currentTheme.name}</span>
-                                <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
-                                </svg>
-                            </button>
-
-                            {/* Theme dropdown */}
-                            {isThemeMenuOpen && (
-                                <div className={`absolute right-0 mt-2 w-48 py-2 ${currentTheme.colors.cardBg} 
-                                    rounded-lg shadow-xl z-20 border border-${currentTheme.colors.accent}/20`}>
-                                    {Object.values(themes).map((theme) => (
-                                        <button
-                                            key={theme.id}
-                                            onClick={() => handleThemeChange(theme.id)}
-                                            className={`block w-full text-left px-4 py-2 ${currentTheme.animation.transition}
-                                                ${currentTheme.id === theme.id ? `bg-${currentTheme.colors.accent}/20` : 'hover:bg-gray-100/20'}
-                                                ${currentTheme.colors.text}`}
-                                        >
-                                            <span className="flex items-center gap-2">
-                                                <span>{theme.icon}</span>
-                                                <span>{theme.name}</span>
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {[ 
-                            { to: "/", label: "Home" },
-                            { to: "/about", label: "About" }
-                        ].map((link) => (
-                            <Link
-                                key={link.label}
-                                to={link.to}
-                                className={`relative text-${currentTheme.colors.accent} hover:text-${currentTheme.colors.secondary} text-lg ${currentTheme.animation.transition}
-                                    after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-${currentTheme.colors.accent}
-                                    after:left-0 after:-bottom-1 after:transition-all after:duration-300
-                                    hover:after:w-full`}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                        <Link
-                            to="/contact"
-                            className={`bg-gradient-to-r ${currentTheme.colors.primary} text-white 
-                                px-6 py-2 rounded-full ${currentTheme.animation.transition}
-                                hover:shadow-lg hover:shadow-${currentTheme.colors.secondary}/25 ${currentTheme.animation.button}
-                                active:scale-95`}
-                        >
-                            Contact
-                        </Link>
-                    </div>
-
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden relative z-50 w-10 h-10 focus:outline-none bg-opacity-90 
-                            hover:bg-opacity-100 rounded-lg backdrop-blur-sm"
-                        aria-label="Toggle Menu"
-                    >
-                        <div className="absolute inset-0 bg-gray-900/10 rounded-lg backdrop-blur-sm"></div>
-                        <span className={`block absolute left-1/2 -translate-x-1/2 h-0.5 w-6 
-                            bg-current transform ${currentTheme.animation.transition} 
-                            ${isMenuOpen ? 'rotate-45 translate-y-0 top-5' : 'top-3'}`}>
-                        </span>
-                        <span className={`block absolute left-1/2 -translate-x-1/2 top-5 h-0.5 w-6 
-                            bg-current transform ${currentTheme.animation.transition} 
-                            ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}>
-                        </span>
-                        <span className={`block absolute left-1/2 -translate-x-1/2 h-0.5 w-6 
-                            bg-current transform ${currentTheme.animation.transition} 
-                            ${isMenuOpen ? '-rotate-45 translate-y-0 top-5' : 'top-7'}`}>
-                        </span>
-                    </button>
-                </div>
-            </nav>
-
-            {/* Mobile Menu */}
-            <div 
-                className={`fixed inset-0 bg-gradient-to-b ${currentTheme.colors.navbarBg} backdrop-blur-lg
-                    transform ${currentTheme.animation.transition} md:hidden
-                    ${isMenuOpen ? 'menu-enter-active' : 'menu-exit-active'}`}
-                style={{
-                    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}
-            >
-                <div className={`flex flex-col items-center justify-center h-full gap-8 pb-20
-                    ${isMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
-                    transition-all duration-500 delay-100 transform`}
-                >
-                    {/* Mobile theme selector */}
-                    <div className="flex flex-col items-center gap-4">
-                        <h3 className={`text-${currentTheme.colors.accent} text-lg font-medium`}>Choose Theme</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            {Object.values(themes).map((theme) => (
-                                <button
-                                    key={theme.id}
-                                    onClick={() => handleThemeChange(theme.id)}
-                                    className={`flex flex-col items-center px-6 py-4 rounded-lg ${currentTheme.animation.transition}
-                                        ${currentTheme.id === theme.id ? `bg-${currentTheme.colors.accent}/20 ring-2 ring-${currentTheme.colors.accent}` : `bg-${currentTheme.colors.cardBg} opacity-80`}
-                                        ${currentTheme.colors.text}`}
-                                >
-                                    <span className="text-3xl mb-2">{theme.icon}</span>
-                                    <span>{theme.name}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {[ 
-                        { to: "/", label: "Home", icon: "🏠", delay: 0 },
-                        { to: "/about", label: "About", icon: "ℹ️", delay: 100 },
-                        { to: "/contact", label: "Contact", icon: "📧", delay: 200 }
-                    ].map((link) => (
-                        <Link
-                            key={link.label}
-                            to={link.to}
-                            onClick={() => setIsMenuOpen(false)}
-                            className={`flex items-center gap-3 px-6 py-3 rounded-lg w-64
-                                ${currentTheme.animation.transition} ${currentTheme.animation.button}
-                                bg-${currentTheme.colors.cardBg}/80 backdrop-blur-sm
-                                hover:bg-${currentTheme.colors.accent}/20
-                                hover:scale-105 active:scale-95
-                                border border-${currentTheme.colors.accent}/30
-                                shadow-lg shadow-${currentTheme.colors.accent}/10
-                                transform transition-all duration-500
-                                ${isMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}
-                            style={{ 
-                                transitionDelay: isMenuOpen ? `${link.delay}ms` : '0ms'
-                            }}
-                        >
-                            <span className="text-2xl filter drop-shadow-md">{link.icon}</span>
-                            <span className={`text-xl font-medium text-${currentTheme.colors.headerText}
-                                drop-shadow-sm`}>
-                                {link.label}
-                            </span>
-                            <span className="ml-auto text-lg opacity-75 group-hover:opacity-100 
-                                transform group-hover:translate-x-1 transition-all">
-                                →
-                            </span>
-                        </Link>
-                    ))}
-                </div>
+  return (
+    <nav className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-lg">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 rounded-xl flex items-center justify-center shadow-lg">
+              <svg className="w-6 h-6 text-white dark:text-slate-900" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
             </div>
+            <div className="flex flex-col">
+              <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-tagesschrift">
+                SecureVault
+              </h1>
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-source-code">
+                Password Manager
+              </p>
+            </div>
+          </div>
+
+          {/* Navigation Links - Desktop */}
+          <div className="hidden md:flex items-center space-x-8">
+            <button 
+              onClick={handleHomeClick}
+              className={`text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 font-medium font-source-code focus:outline-none flex items-center gap-2 ${isRefreshing ? 'animate-pulse' : ''} ${isActiveRoute('/') ? 'text-slate-900 dark:text-slate-100 font-semibold' : ''}`}
+              disabled={isRefreshing}
+            >
+              <svg 
+                className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Home
+            </button>
+            <button 
+              onClick={() => navigateToPage('about')}
+              className={`text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200 font-medium font-source-code focus:outline-none flex items-center gap-2 ${isActiveRoute('/about') ? 'text-slate-900 dark:text-slate-100 font-semibold' : ''}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              About
+            </button>
+            <button 
+              onClick={() => navigateToPage('contact')}
+              className={`text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200 font-medium font-source-code focus:outline-none flex items-center gap-2 ${isActiveRoute('/contact') ? 'text-slate-900 dark:text-slate-100 font-semibold' : ''}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Contact
+            </button>
+          </div>
+
+          {/* Auth Buttons - Desktop */}
+          <div className="hidden md:flex items-center">
+            <SignedOut>
+              <SignInButton>
+                <button className="px-6 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-slate-900 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg font-source-code">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            
+            <SignedIn>
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-10 h-10 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-lg",
+                    userButtonPopover: "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-xl",
+                  }
+                }}
+              />
+            </SignedIn>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button 
+              onClick={toggleMobileMenu}
+              className="p-2 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 focus:outline-none transform hover:scale-105 active:scale-95"
+            >
+              <div className="relative w-6 h-6 flex items-center justify-center">
+                {/* Hamburger Icon */}
+                <div className={`absolute inset-0 transform transition-all duration-300 ${isMobileMenuOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'}`}>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </div>
+                
+                {/* Close Icon */}
+                <div className={`absolute inset-0 transform transition-all duration-300 ${isMobileMenuOpen ? 'rotate-0 opacity-100' : 'rotate-180 opacity-0'}`}>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
-    );
-};
+
+        {/* Mobile Menu */}
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen 
+            ? 'max-h-96 opacity-100 transform translate-y-0' 
+            : 'max-h-0 opacity-0 transform -translate-y-4'
+        }`}>
+          <div className="mt-4 pb-4 border-t border-slate-200 dark:border-slate-700">
+            <div className="flex flex-col space-y-4 pt-4">
+              {/* Mobile Navigation Links */}
+              <button 
+                onClick={handleHomeClick}
+                className={`text-left text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 font-medium font-source-code focus:outline-none flex items-center gap-2 transform hover:translate-x-2 hover:scale-105 ${isRefreshing ? 'animate-pulse' : ''} ${isActiveRoute('/') ? 'text-slate-900 dark:text-slate-100 font-semibold' : ''}`}
+                disabled={isRefreshing}
+                style={{ animationDelay: '0.1s' }}
+              >
+                <svg 
+                  className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Home
+              </button>
+              <button 
+                onClick={() => navigateToPage('about')}
+                className={`text-left text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 font-medium font-source-code focus:outline-none flex items-center gap-2 transform hover:translate-x-2 hover:scale-105 ${isActiveRoute('/about') ? 'text-slate-900 dark:text-slate-100 font-semibold' : ''}`}
+                style={{ animationDelay: '0.2s' }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                About
+              </button>
+              <button 
+                onClick={() => navigateToPage('contact')}
+                className={`text-left text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 font-medium font-source-code focus:outline-none flex items-center gap-2 transform hover:translate-x-2 hover:scale-105 ${isActiveRoute('/contact') ? 'text-slate-900 dark:text-slate-100 font-semibold' : ''}`}
+                style={{ animationDelay: '0.3s' }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Contact
+              </button>
+              
+              {/* Mobile Auth */}
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-700 transform transition-all duration-300" style={{ animationDelay: '0.4s' }}>
+                <SignedOut>
+                  <SignInButton>
+                    <button className="w-full px-6 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-slate-900 font-semibold rounded-lg transition-all duration-200 shadow-lg font-source-code transform hover:scale-105 active:scale-95">
+                      Sign In
+                    </button>
+                  </SignInButton>
+                </SignedOut>
+                
+                <SignedIn>
+                  <div className="flex items-center space-x-3 transform transition-all duration-200 hover:scale-105">
+                    <UserButton 
+                      appearance={{
+                        elements: {
+                          avatarBox: "w-10 h-10 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-lg",
+                          userButtonPopover: "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-xl",
+                        }
+                      }}
+                    />
+                    <span className="text-slate-700 dark:text-slate-300 font-source-code text-sm">
+                      Account
+                    </span>
+                  </div>
+                </SignedIn>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
 
 export default Navbar;

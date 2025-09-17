@@ -1,105 +1,81 @@
 import React from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { Toaster } from 'sonner';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { ClerkProvider } from '@clerk/clerk-react';
 import { ThemeProvider } from './components/ThemeContext';
-import './App.css';
 import Navbar from './components/Navbar';
-import Manager from './components/Manager';
 import About from './components/About';
 import Contact from './components/Contact';
-import { useAuth } from '@clerk/clerk-react';
-import { SignIn, SignUp } from '@clerk/clerk-react';
+import Manager from './components/Manager';
+import { Toaster } from 'sonner';
+import './App.css';
 
-function ProtectedRoute({ children }) {
-  const { isSignedIn, isLoaded } = useAuth();
-  const location = useLocation();
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-  if (!isLoaded) return null; // or a loading spinner
-
-  if (!isSignedIn) {
-    return <Navigate to="/sign-in" state={{ from: location }} replace />;
-  }
-
-  return children;
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key");
 }
 
-function App() {
+// Layout component that wraps all routes
+function RootLayout() {
   return (
-    <ThemeProvider>
-      <>
-        <Routes>
-          {/* Protected routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Navbar />
-                <Manager />
-              </ProtectedRoute>
-            }
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+      <ThemeProvider>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+          <Navbar />
+          
+          {/* This is where child routes will be rendered */}
+          <Outlet />
+          
+          {/* Sonner Toast Provider */}
+          <Toaster 
+            theme="light"
+            className="toaster group"
+            toastOptions={{
+              classNames: {
+                toast: 'group toast group-[.toaster]:bg-white group-[.toaster]:text-slate-950 group-[.toaster]:border-slate-200 group-[.toaster]:shadow-lg dark:group-[.toaster]:bg-slate-950 dark:group-[.toaster]:text-slate-50 dark:group-[.toaster]:border-slate-800',
+                description: 'group-[.toast]:text-slate-500 dark:group-[.toast]:text-slate-400',
+                actionButton: 'group-[.toast]:bg-slate-900 group-[.toast]:text-slate-50 dark:group-[.toast]:bg-slate-50 dark:group-[.toast]:text-slate-900',
+                cancelButton: 'group-[.toast]:bg-slate-100 group-[.toast]:text-slate-500 dark:group-[.toast]:bg-slate-800 dark:group-[.toast]:text-slate-400',
+              },
+            }}
+            position="top-right"
+            expand={false}
+            richColors
           />
-          <Route
-            path="/about"
-            element={
-              <ProtectedRoute>
-                <Navbar />
-                <About />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contact"
-            element={
-              <ProtectedRoute>
-                <Navbar />
-                <Contact />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Clerk Auth routes */}
-          <Route path="/sign-in/*" element={<SignIn routing="path" path="/sign-in" />} />
-          <Route path="/sign-up/*" element={<SignUp routing="path" path="/sign-up" />} />
-
-          {/* Redirect all other routes */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-        <Toaster
-          position="top-center"
-          expand={true}
-          richColors
-          closeButton
-          theme="system"
-          toastOptions={{
-            style: {
-              fontSize: '0.95rem',
-              padding: '12px',
-              maxWidth: '360px'
-            },
-            actionButtonStyle: {
-              fontSize: '1rem',
-              padding: '10px 20px',
-              fontWeight: '600',
-              borderRadius: '6px',
-              minWidth: '90px'
-            },
-            cancelButtonStyle: {
-              fontSize: '1rem',
-              padding: '10px 20px',
-              fontWeight: '600',
-              borderRadius: '6px',
-              minWidth: '90px'
-            },
-            description: {
-              style: {
-                fontSize: '0.9rem'
-              }
-            }
-          }}
-        />
-      </>
-    </ThemeProvider>
+        </div>
+      </ThemeProvider>
+    </ClerkProvider>
   );
+}
+
+// Create router configuration
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Manager />
+      },
+      {
+        path: "/about",
+        element: <About />
+      },
+      {
+        path: "/contact", 
+        element: <Contact />
+      },
+      {
+        path: "/manager",
+        element: <Manager />
+      }
+    ]
+  }
+]);
+
+function App() {
+  return <RouterProvider router={router} />;
 }
 
 export default App;
