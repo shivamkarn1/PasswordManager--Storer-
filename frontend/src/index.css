@@ -76,3 +76,15 @@
   }
 }
 
+/* Montserrat for inputs/placeholders */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.montserrat-input {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.montserrat-input::placeholder {
+  font-family: 'Montserrat', sans-serif;
+  opacity: 1; /* ensure placeholder renders with font */
+}
+

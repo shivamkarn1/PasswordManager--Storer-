@@ -286,10 +286,7 @@ function Manager() {
                     value={form.website}
                     onChange={handleChange}
                     placeholder="Enter platform name"
-                    className="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent transition-all duration-200"
-                    style={{ 
-                      fontFamily: "'Goldman', cursive"
-                    }}
+                    className="montserrat-input w-full h-12 px-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent transition-all duration-200"
                     required
                   />
                 </div>
@@ -306,10 +303,7 @@ function Manager() {
                     value={form.username}
                     onChange={handleChange}
                     placeholder="Enter username or email"
-                    className="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent transition-all duration-200"
-                    style={{ 
-                      fontFamily: "'Goldman', cursive"
-                    }}
+                    className="montserrat-input w-full h-12 px-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent transition-all duration-200"
                     required
                   />
                 </div>
@@ -327,10 +321,7 @@ function Manager() {
                     onChange={handleChange}
                     placeholder="Enter password"
                     type="password"
-                    className="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent transition-all duration-200"
-                    style={{ 
-                      fontFamily: "'Goldman', cursive"
-                    }}
+                    className="montserrat-input w-full h-12 px-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent transition-all duration-200"
                     required
                   />
                 </div>
