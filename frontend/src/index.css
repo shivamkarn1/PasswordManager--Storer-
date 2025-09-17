@@ -88,3 +88,28 @@
   opacity: 1; /* ensure placeholder renders with font */
 }
 
+.toaster--center {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 9999 !important;
+  width: min(480px, calc(100% - 2rem));
+  pointer-events: auto;
+}
+
+/* Make it slightly lower and full-width on small screens */
+@media (max-width: 640px) {
+  .toaster--center {
+    top: 60% !important;
+    width: calc(100% - 2rem);
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
+/* Optional: reduce gap between stacked toasts */
+.toaster--center .toast {
+  margin: 0.4rem 0;
+}
+
