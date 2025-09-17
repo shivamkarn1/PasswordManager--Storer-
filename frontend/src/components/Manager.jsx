@@ -44,7 +44,7 @@ function Manager() {
               style: {
                 background: 'var(--background)',
                 color: 'var(--foreground)',
-                border: '1px solid var(--border)',
+                border: '2px solid var(--border)',
               }
             });
             setHasShownWelcome(true);
@@ -105,7 +105,7 @@ function Manager() {
         style: {
           background: 'var(--background)',
           color: 'var(--foreground)',
-          border: '1px solid var(--border)',
+          border: '2px solid var(--border)',
         }
       });
       
@@ -148,7 +148,7 @@ function Manager() {
         style: {
           background: 'var(--background)',
           color: 'var(--foreground)',
-          border: '1px solid var(--border)',
+          border: '2px solid var(--border)',
         }
       });
       
@@ -189,7 +189,7 @@ function Manager() {
         style: {
           background: 'var(--background)',
           color: 'var(--foreground)',
-          border: '1px solid var(--border)',
+          border: '2px solid var(--border)',
         }
       });
     } catch (err) {
