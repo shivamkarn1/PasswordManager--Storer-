@@ -27,6 +27,9 @@ function Manager() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [itemsPerPage] = useState(8); // Adjustable items per page
+  
+  // State for showing password in form input
+  const [showFormPassword, setShowFormPassword] = useState(false);
 
   useEffect(() => {
     const loadPasswords = async () => {
@@ -183,6 +186,10 @@ function Manager() {
       ...prev,
       [id]: !prev[id]
     }));
+  };
+
+  const toggleFormPasswordVisibility = () => {
+    setShowFormPassword(prev => !prev);
   };
 
   const copyToClipboard = async (text, type, id) => {
@@ -432,22 +439,48 @@ function Manager() {
                     </svg>
                     Password
                   </label>
-                  <input
-                    name="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="Enter password"
-                    type="password"
-                    className={`
-                      montserrat-input w-full h-12 px-4 border rounded-xl placeholder-zinc-500 
-                      focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200
-                      ${isDarkMode 
-                        ? 'bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-zinc-500' 
-                        : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:ring-zinc-400'
-                      }
-                    `}
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      name="password"
+                      value={form.password}
+                      onChange={handleChange}
+                      placeholder="Enter password"
+                      type={showFormPassword ? "text" : "password"}
+                      className={`
+                        montserrat-input w-full h-12 px-4 pr-12 border rounded-xl placeholder-zinc-500 
+                        focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200
+                        ${isDarkMode 
+                          ? 'bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-zinc-500' 
+                          : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:ring-zinc-400'
+                        }
+                      `}
+                      style={{ fontFamily: '"Fira Code", "JetBrains Mono", monospace' }}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={toggleFormPasswordVisibility}
+                      className={`
+                        absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded transition-colors duration-200
+                        ${isDarkMode 
+                          ? 'text-zinc-400 hover:text-zinc-200' 
+                          : 'text-zinc-500 hover:text-zinc-700'
+                        }
+                      `}
+                    >
+                      {showFormPassword ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd"/>
+                          <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                          <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -486,7 +519,7 @@ function Manager() {
           </div>
         </div>
 
-        {/* Passwords List - Replace the existing passwords list section with this */}
+        {/* Passwords List */}
         <div className={`
           rounded-3xl shadow-2xl border transition-all duration-300
           ${isDarkMode 
@@ -678,18 +711,19 @@ function Manager() {
                             </label>
                             <button
                               onClick={() => copyToClipboard(password.username, 'username', password._id)}
-                              className={`opacity-0 group-hover/item:opacity-100 md:opacity-100 p-1 rounded transition-all duration-200 ${
+                              className={`opacity-0 group-hover/item:opacity-100 md:opacity-100 p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
                                 isDarkMode 
                                   ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
                                   : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
                               }`}
+                              title="Copy username"
                             >
                               {copyFeedback[password._id] === 'username' ? (
-                                <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                               ) : (
-                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                   <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
                                   <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
                                 </svg>
@@ -708,22 +742,23 @@ function Manager() {
                             <label className={`text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                               Password
                             </label>
-                            <div className="flex items-center space-x-1 opacity-0 group-hover/item:opacity-100 md:opacity-100 transition-opacity duration-200">
+                            <div className="flex items-center space-x-2 opacity-0 group-hover/item:opacity-100 md:opacity-100 transition-opacity duration-200">
                               <button
                                 onClick={() => togglePasswordVisibility(password._id)}
-                                className={`p-1 rounded transition-all duration-200 ${
+                                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
                                   isDarkMode 
                                     ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
                                     : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
                                 }`}
+                                title={showPassword[password._id] ? "Hide password" : "Show password"}
                               >
                                 {showPassword[password._id] ? (
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd"/>
                                     <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
                                   </svg>
                                 ) : (
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
                                     <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
                                   </svg>
@@ -731,18 +766,19 @@ function Manager() {
                               </button>
                               <button
                                 onClick={() => copyToClipboard(password.password, 'password', password._id)}
-                                className={`p-1 rounded transition-all duration-200 ${
+                                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
                                   isDarkMode 
                                     ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
                                     : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
                                 }`}
+                                title="Copy password"
                               >
                                 {copyFeedback[password._id] === 'password' ? (
-                                  <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                   </svg>
                                 ) : (
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
                                     <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
                                   </svg>
@@ -838,6 +874,84 @@ function Manager() {
             )}
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className={`
+              w-full max-w-md rounded-2xl p-6 shadow-2xl border transition-all duration-300
+              ${isDarkMode 
+                ? 'bg-zinc-900 border-zinc-700' 
+                : 'bg-white border-zinc-200'
+              }
+            `}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className={`
+                  w-12 h-12 rounded-xl flex items-center justify-center
+                  ${isDarkMode ? 'bg-red-900/30' : 'bg-red-100'}
+                `}>
+                  <svg className={`w-6 h-6 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Handlee', cursive" }}>
+                    Confirm Deletion
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                    This action cannot be undone
+                  </p>
+                </div>
+              </div>
+              
+              <div className={`p-4 rounded-xl mb-6 ${isDarkMode ? 'bg-zinc-800/50' : 'bg-zinc-50'}`}>
+                <p className={`text-sm font-medium ${isDarkMode ? 'text-zinc-200' : 'text-zinc-700'}`}>
+                  Are you sure you want to delete the password for{' '}
+                  <span className="font-semibold">
+                    {passwords.find(p => p._id === deleteConfirm)?.website}
+                  </span>
+                  ?
+                </p>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setDeleteConfirm(null)}
+                  className={`
+                    flex-1 h-11 px-4 font-medium rounded-xl transition-all duration-200 border
+                    ${isDarkMode 
+                      ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border-zinc-700' 
+                      : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200'
+                    }
+                  `}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteConfirm)}
+                  className="flex-1 h-11 px-4 bg-red-500 hover:bg-red-600 text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <RiDeleteBin6Line className="w-4 h-4" />
+                      Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
