@@ -81,8 +81,8 @@ const About = () => {
               </svg>
             </div>
 
-            <h1 className="text-6xl md:text-7xl font-black mb-4 bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-slate-100 dark:via-slate-300 dark:to-slate-100 bg-clip-text text-transparent leading-tight" style={{ fontFamily: "'Libertinus Keyboard', monospace" }}>
-              ABOUT SECUREVAULT
+            <h1 className="text-3xl md:text-7xl font-black mb-4 bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-slate-100 dark:via-slate-300 dark:to-slate-100 bg-clip-text text-transparent leading-tight" style={{ fontFamily: "'Libertinus Keyboard', monospace" }}>
+              ABOUT THIS VAULT.
             </h1>
             
             <div className="w-32 h-1 bg-gradient-to-r from-transparent via-slate-400 to-transparent mx-auto mb-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}></div>
