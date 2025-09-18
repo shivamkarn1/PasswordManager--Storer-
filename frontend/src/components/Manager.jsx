@@ -48,7 +48,7 @@ function Manager() {
             const firstName = user.firstName || 'User';
             toast.success(`🎉 Welcome back, ${firstName}!`, {
               description: "Your secure vault is ready. All your passwords are safe and encrypted.",
-              duration: 4000,
+              duration: 2000,
               style: {
                 background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
                 color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
@@ -63,7 +63,7 @@ function Manager() {
         setError('Failed to load passwords. Please try again.');
         toast.error("Failed to load passwords", {
           description: "Please check your connection and try again.",
-          duration: 3000
+          duration: 2000
         });
       } finally {
         setLoading(false);
@@ -114,7 +114,7 @@ function Manager() {
       // Show success toast
       toast.success("🔒 Password Secured!", {
         description: `Successfully saved credentials for ${form.website}`,
-        duration: 3000,
+        duration: 2000,
         style: {
           background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
           color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
@@ -130,7 +130,7 @@ function Manager() {
       setError(`Failed to save password: ${error.message}`);
       toast.error("Save Failed", {
         description: "Failed to save password. Please try again.",
-        duration: 3000
+        duration: 2000
       });
     } finally {
       setLoading(false);
@@ -157,7 +157,7 @@ function Manager() {
       
       toast.success("🗑️ Password Deleted!", {
         description: "Password entry has been permanently removed.",
-        duration: 3000,
+        duration: 2000,
         style: {
           background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
           color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
@@ -174,7 +174,7 @@ function Manager() {
       setDeleteConfirm(null);
       toast.error("Delete Failed", {
         description: error.message || "Failed to delete password. Please try again.",
-        duration: 3000
+        duration: 2000
       });
     } finally {
       setLoading(false);
