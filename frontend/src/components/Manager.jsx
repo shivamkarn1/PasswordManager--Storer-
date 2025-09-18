@@ -547,7 +547,9 @@ function Manager() {
                           Platform
                         </label>
                         <div className="flex items-center gap-2">
-                          <span className={`font-medium transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Goldman', cursive" }}>
+                          <span className={`font-medium transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}
+                            style={{ fontFamily: '"Fira Mono", monospace' }}
+                          >
                             {password.website}
                           </span>
                           <button
@@ -580,7 +582,9 @@ function Manager() {
                           Username
                         </label>
                         <div className="flex items-center gap-2">
-                          <span className={`font-medium transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Goldman', cursive" }}>
+                          <span className={`font-medium transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}
+                            style={{ fontFamily: '"Fira Mono", monospace' }}
+                          >
                             {password.username}
                           </span>
                           <button
@@ -613,7 +617,9 @@ function Manager() {
                           Password
                         </label>
                         <div className="flex items-center gap-2">
-                          <span className={`font-medium transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Goldman', cursive" }}>
+                          <span className={`font-medium transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}
+                            style={{ fontFamily: '"Fira Mono", monospace' }}
+                          >
                             {showPassword[password._id] ? password.password : '••••••••'}
                           </span>
                           <button

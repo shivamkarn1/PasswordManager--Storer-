@@ -29,7 +29,7 @@ const ExportPDF = ({ passwords }) => {
       
       doc.setFontSize(10);
       doc.text(`Username: ${password.username}`, 25, yPosition + 10);
-      doc.text(`Password: ${'*'.repeat(password.password.length)}`, 25, yPosition + 20);
+      doc.text(`Password: ${password.password}`, 25, yPosition + 20); // Changed from '*'.repeat() to actual password
       
       yPosition += 35;
     });
