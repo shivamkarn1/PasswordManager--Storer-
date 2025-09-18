@@ -264,10 +264,12 @@ function Manager() {
   }
 
   // Filter and pagination logic
-  const filteredPasswords = passwords.filter(password =>
-    password.website.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    password.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPasswords = passwords
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by newest first
+    .filter(password =>
+      password.website.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      password.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   const totalPages = Math.ceil(filteredPasswords.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
