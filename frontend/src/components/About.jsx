@@ -1,5 +1,4 @@
-import React from 'react';
-
+import Footer from "./Footer";
 const About = () => {
   const features = [
     { 
@@ -189,6 +188,8 @@ const About = () => {
           </div>
         </div>
       </div>
+      {/* Footer Component */}
+      <Footer />
     </div>
   );
 };
