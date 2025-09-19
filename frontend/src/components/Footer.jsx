@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -33,20 +34,23 @@ const Footer = () => {
               Quick Links
             </h3>
             <div className="space-y-2">
-              {[
-                { name: 'Home', href: '/' },
-                { name: 'About', href: '/about' },
-                { name: 'Contact', href: '/contact' },
-                { name: 'Privacy Policy', href: '#' },
-                { name: 'Terms of Service', href: '#' }
-              ].map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
+              {/*
+                { name: 'Home', to: '/' },
+                { name: 'About', to: '/about' },
+                { name: 'Contact', to: '/contact' }
+              */}
+              {Object.entries({
+                Home: '/',
+                About: '/about',
+                Contact: '/contact'
+              }).map(([name, to]) => (
+                <Link
+                  key={name}
+                  to={to}
                   className="block text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200 font-source-code"
                 >
-                  {link.name}
-                </a>
+                  {name}
+                </Link>
               ))}
             </div>
           </div>
