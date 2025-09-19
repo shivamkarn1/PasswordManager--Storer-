@@ -8,6 +8,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import { IoTrashBinSharp } from "react-icons/io5";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import Footer from "./Footer";
 
 function Manager() {
   const { getToken, isSignedIn, user } = useAuth();
