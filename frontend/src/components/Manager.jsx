@@ -34,6 +34,56 @@ function Manager() {
   // State for showing password in form input
   const [showFormPassword, setShowFormPassword] = useState(false);
 
+  // Enhanced toast styling function
+  const getToastStyle = (type = 'default') => {
+    if (isDarkMode) {
+      // Dark mode: Subtle whitish appearance
+      return {
+        background: 'rgba(255, 255, 255, 0.12)',
+        backdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255, 255, 255, 0.18)',
+        color: '#f8fafc',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(255, 255, 255, 0.1)',
+        borderRadius: '12px',
+        fontWeight: '500',
+        fontSize: '14px',
+        fontFamily: '"Inter", "Source Code Pro", system-ui, sans-serif',
+      };
+    } else {
+      // Light mode: Dark and bold
+      const baseStyle = {
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+        border: '1px solid rgba(0, 0, 0, 0.2)',
+        color: '#ffffff',
+        boxShadow: '0 12px 40px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.15)',
+        borderRadius: '12px',
+        fontWeight: '600',
+        fontSize: '14px',
+        fontFamily: '"Inter", "Source Code Pro", system-ui, sans-serif',
+      };
+
+      // Add accent colors based on toast type
+      switch (type) {
+        case 'success':
+          return {
+            ...baseStyle,
+            background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            boxShadow: '0 12px 40px rgba(16, 185, 129, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15)',
+          };
+        case 'error':
+          return {
+            ...baseStyle,
+            background: 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            boxShadow: '0 12px 40px rgba(239, 68, 68, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15)',
+          };
+        default:
+          return baseStyle;
+      }
+    }
+  };
+
   useEffect(() => {
     const loadPasswords = async () => {
       if (!isSignedIn) return;
@@ -51,12 +101,8 @@ function Manager() {
             const firstName = user.firstName || 'User';
             toast.success(`🎉 Welcome back, ${firstName}!`, {
               description: "Your secure vault is ready. All your passwords are safe and encrypted.",
-              duration: 2000,
-              style: {
-                background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
-                color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
-                border: `1px solid ${isDarkMode ? 'hsl(216 34% 17%)' : 'hsl(220 13% 91%)'}`,
-              }
+              duration: 3000,
+              style: getToastStyle('success'),
             });
             setHasShownWelcome(true);
           }
@@ -66,7 +112,8 @@ function Manager() {
         setError('Failed to load passwords. Please try again.');
         toast.error("Failed to load passwords", {
           description: "Please check your connection and try again.",
-          duration: 2000
+          duration: 3000,
+          style: getToastStyle('error'),
         });
       } finally {
         setLoading(false);
@@ -87,12 +134,8 @@ function Manager() {
       setError('Please fill in all fields');
       toast.error("Missing Information", {
         description: "Please fill in all fields before saving.",
-        duration: 3000,
-        style: {
-          background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
-          color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
-          border: `1px solid ${isDarkMode ? 'hsl(0 62% 30%)' : 'hsl(0 84% 60%)'}`,
-        }
+        duration: 3500,
+        style: getToastStyle('error'),
       });
       return;
     }
@@ -106,23 +149,21 @@ function Manager() {
         setError('Authentication token not found. Please sign in again.');
         toast.error("Authentication Error", {
           description: "Please sign in again to continue.",
-          duration: 3000
+          duration: 4000,
+          style: getToastStyle('error'),
         });
         return;
       }
 
       await savePassword(form, token);
+      const websiteName = form.website;
       setForm({ website: "", username: "", password: "" });
       
       // Show success toast
       toast.success("🔒 Password Secured!", {
-        description: `Successfully saved credentials for ${form.website}`,
-        duration: 2000,
-        style: {
-          background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
-          color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
-          border: `1px solid ${isDarkMode ? 'hsl(142 76% 36%)' : 'hsl(142 76% 36%)'}`,
-        }
+        description: `Successfully saved credentials for ${websiteName}`,
+        duration: 3000,
+        style: getToastStyle('success'),
       });
       
       // Refresh passwords list
@@ -133,7 +174,8 @@ function Manager() {
       setError(`Failed to save password: ${error.message}`);
       toast.error("Save Failed", {
         description: "Failed to save password. Please try again.",
-        duration: 2000
+        duration: 3000,
+        style: getToastStyle('error'),
       });
     } finally {
       setFormLoading(false);
@@ -148,7 +190,8 @@ function Manager() {
       if (!token) {
         toast.error("Authentication Error", {
           description: "Please sign in again to continue.",
-          duration: 3000
+          duration: 4000,
+          style: getToastStyle('error'),
         });
         return;
       }
@@ -160,12 +203,8 @@ function Manager() {
       
       toast.success("🗑️ Password Deleted!", {
         description: "Password entry has been permanently removed.",
-        duration: 2000,
-        style: {
-          background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
-          color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
-          border: `1px solid ${isDarkMode ? 'hsl(216 34% 17%)' : 'hsl(220 13% 91%)'}`,
-        }
+        duration: 2500,
+        style: getToastStyle('success'),
       });
       
       // Refresh passwords list
@@ -177,7 +216,8 @@ function Manager() {
       setDeleteConfirm(null);
       toast.error("Delete Failed", {
         description: error.message || "Failed to delete password. Please try again.",
-        duration: 2000
+        duration: 3000,
+        style: getToastStyle('error'),
       });
     } finally {
       setDeleteLoading(false);
@@ -206,17 +246,14 @@ function Manager() {
       toast.success(`📋 ${typeCapitalized} Copied!`, {
         description: `${typeCapitalized} has been copied to your clipboard securely.`,
         duration: 2000,
-        style: {
-          background: isDarkMode ? 'hsl(224 71% 4%)' : 'hsl(0 0% 100%)',
-          color: isDarkMode ? 'hsl(213 31% 91%)' : 'hsl(224 71% 4%)',
-          border: `1px solid ${isDarkMode ? 'hsl(216 34% 17%)' : 'hsl(220 13% 91%)'}`,
-        }
+        style: getToastStyle('success'),
       });
     } catch (err) {
       console.error('Failed to copy: ', err);
       toast.error("Copy Failed", {
         description: "Unable to copy to clipboard. Please try again.",
-        duration: 2000
+        duration: 2500,
+        style: getToastStyle('error'),
       });
     }
   };
