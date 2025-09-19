@@ -63,7 +63,6 @@ const Footer = () => {
             <div className="space-y-3">
               {[
                 { icon: '🔒', text: 'AES-256 Encryption' },
-                { icon: '🛡️', text: 'Zero-Knowledge Architecture' },
                 { icon: '💾', text: 'Secure Cloud Backup' },
                 { icon: '📱', text: 'Cross-Platform Sync' }
               ].map((feature, index) => (
