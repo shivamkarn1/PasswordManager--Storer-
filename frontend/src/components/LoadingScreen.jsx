@@ -56,34 +56,10 @@ const LoadingScreen = () => {
             Initializing secure vault...
           </p>
           
-          {/* Premium Loading Bar */}
-          <div className="w-80 h-2 bg-gray-800/60 rounded-full overflow-hidden backdrop-blur-sm border border-gray-700/50">
-            <div 
-              className="h-full bg-gradient-to-r from-gray-400 via-gray-300 to-white rounded-full shadow-lg shadow-gray-400/30"
-              style={{
-                animation: 'loadingBar 2.5s ease-in-out infinite'
-              }}
-            ></div>
-          </div>
-
           {/* Loading percentage indicator */}
           <div className="text-xs text-gray-400 font-mono animate-pulse">
             Encrypting your data...
           </div>
-        </div>
-
-        {/* Premium Accent Elements */}
-        <div className="flex space-x-3 mt-6">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="w-2 h-2 rounded-full bg-gradient-to-r from-gray-400 to-white animate-bounce shadow-sm shadow-gray-400/50"
-              style={{
-                animationDelay: `${i * 0.15}s`,
-                animationDuration: '1.2s'
-              }}
-            ></div>
-          ))}
         </div>
       </div>
       
@@ -108,22 +84,6 @@ const LoadingScreen = () => {
       <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-gray-600/30"></div>
       <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-gray-400/30"></div>
       <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-gray-700/30"></div>
-      
-      <style jsx>{`
-        @keyframes loadingBar {
-          0% {
-            transform: translateX(-100%);
-            width: 0%;
-          }
-          50% {
-            width: 75%;
-          }
-          100% {
-            transform: translateX(100%);
-            width: 100%;
-          }
-        }
-      `}</style>
     </div>
   );
 };
