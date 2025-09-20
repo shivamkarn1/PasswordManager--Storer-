@@ -34,38 +34,8 @@
 </head>
 
 <body>
-  <div id="root">
-    <!-- Loading screen -->
-    <div
-      style="display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-      <div style="text-align: center;">
-        <img src="/bluelogo.png" alt="Loading..."
-          style="width: 120px; height: 120px; margin-bottom: 24px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" />
-        <p style="font-family: 'Fira Mono', monospace; color: #fff; font-size: 18px; margin: 0;">Shivam's Vault</p>
-        <p style="font-family: 'Fira Mono', monospace; color: rgba(255,255,255,0.8); font-size: 14px; margin: 8px 0;">
-          Loading your secure vault...</p>
-        <div
-          style="width: 60px; height: 4px; background-color: rgba(255,255,255,0.3); border-radius: 2px; margin: 16px auto; overflow: hidden;">
-          <div
-            style="width: 100%; height: 100%; background: linear-gradient(90deg, #fff, #646cff); animation: loading 2s infinite;">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
-
-  <style>
-    @keyframes loading {
-      0% {
-        transform: translateX(-100%);
-      }
-
-      100% {
-        transform: translateX(100%);
-      }
-    }
-  </style>
 </body>
 
 </html>

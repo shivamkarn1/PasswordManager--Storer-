@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { ThemeProvider } from './components/ThemeContext';
@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import About from './components/About';
 import Contact from './components/Contact';
 import Manager from './components/Manager';
+import LoadingScreen from './components/LoadingScreen';
 import { Toaster } from 'sonner';
 import './App.css';
 
@@ -75,7 +76,65 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [shouldShowLoading, setShouldShowLoading] = useState(false);
+
+  useEffect(() => {
+    // Function to detect if this is a fresh browser session vs refresh
+    const detectFreshSession = () => {
+      // Check if sessionStorage has our flag
+      const hasShownInThisSession = sessionStorage.getItem('hasShownLoadingInSession');
+      
+      // Also check navigation type to distinguish between fresh open and refresh
+      const navigationType = performance.getEntriesByType('navigation')[0]?.type;
+      
+      // Show loading if:
+      // 1. Haven't shown in this session AND
+      // 2. It's not a reload (refresh)
+      if (!hasShownInThisSession && navigationType !== 'reload') {
+        return true;
+      }
+      
+      return false;
+    };
+
+    const shouldShow = detectFreshSession();
+    
+    if (shouldShow) {
+      // Show loading screen
+      setShouldShowLoading(true);
+      setIsLoading(true);
+      
+      // Mark as shown for this session
+      sessionStorage.setItem('hasShownLoadingInSession', 'true');
+      
+      // Hide loading after 2.5 seconds
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Skip loading screen
+      setIsLoading(false);
+      setShouldShowLoading(false);
+    }
+  }, []);
+
+  // Show loading screen if conditions are met
+  if (shouldShowLoading && isLoading) {
+    return <LoadingScreen />;
+  }
+
   return <RouterProvider router={router} />;
+}
+
+// Development helper function
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  window.resetLoadingForTesting = () => {
+    sessionStorage.removeItem('hasShownLoadingInSession');
+    console.log('Loading screen reset for this session. Refresh to test.');
+  };
 }
 
 export default App;
