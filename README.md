@@ -2,6 +2,104 @@
 
 A comprehensive password management solution built with enterprise-grade security and modern web technologies. SecureVault provides users with a secure, intuitive platform to store, manage, and organize their passwords across multiple platforms.
 
+## Screenshots
+
+### Homepage - Main Page
+<img src="./images/homepage.png" alt="Homepage - Access Required" width="800">
+
+*The homepage displaying the access required screen with SecureVault branding and secure vault entry point*
+
+### Login Page - Authentication
+<img src="./images/loginPage.png" alt="Login Page - Authentication" width="800">
+
+*Login page featuring multiple authentication options including GitHub OAuth, Google OAuth, and traditional email/username sign-in with Clerk integration*
+
+### Main Dashboard - Password Vault
+<img src="./images/MainPage.png" alt="Main Dashboard - Password Vault" width="800">
+
+*Main password management dashboard with "Add New Entry" functionality, organized password storage interface, PDF export feature, and dark mode toggle*
+
+## Getting Started
+
+### Prerequisites
+- Node.js (version 14 or higher)
+- MongoDB (local installation or MongoDB Atlas)
+- Git
+- Modern web browser
+
+### Installation
+
+1. **Clone the repository**
+```cmd
+git clone https://github.com/Shivam67Code/PasswordManager--Storer-.git
+cd PasswordManager--Storer-
+```
+
+2. **Install backend dependencies**
+```cmd
+cd backend
+npm install
+```
+
+3. **Install frontend dependencies**
+```cmd
+cd ../frontend
+npm install
+```
+
+4. **Environment Configuration**
+Create `.env` files in both backend and frontend directories:
+
+**Backend (.env)**
+```cmd
+echo MONGODB_URI=mongodb://localhost:27017/securevault > .env
+echo CLERK_SECRET_KEY=your_clerk_secret_key >> .env
+echo JWT_SECRET=your_jwt_secret_key >> .env
+echo PORT=5000 >> .env
+```
+
+**Frontend (.env)**
+```cmd
+echo REACT_APP_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key > .env
+echo REACT_APP_API_URL=http://localhost:5000 >> .env
+```
+
+5. **Start MongoDB service**
+```cmd
+mongod
+```
+
+6. **Run the backend server**
+```cmd
+cd backend
+npm start
+```
+
+7. **Run the frontend application**
+```cmd
+cd frontend
+npm start
+```
+
+8. **Access the application**
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
+
+### Development Mode
+To run both frontend and backend concurrently:
+```cmd
+npm run dev
+```
+
+### Usage
+1. Visit the application URL
+2. Sign in using your preferred authentication method
+3. Start adding your password entries
+4. Use the export feature to backup your data
+5. Toggle between light and dark modes as needed
+
 ## Features
 
 ### Authentication
@@ -35,48 +133,31 @@ A comprehensive password management solution built with enterprise-grade securit
 - **Mobile Responsive**: Optimized for mobile browsers
 - **Cross-Browser Compatibility**: Works across all modern web browsers
 
-## Screenshots
-
-### Main Dashboard
-<img src="./screenshots/main-dashboard.png" alt="Main Dashboard" width="800">
-
-*The main dashboard showing the access required screen with SecureVault branding*
-
-### Login Page
-<img src="./screenshots/login-page.png" alt="Login Page" width="800">
-
-*Authentication page with multiple sign-in options including GitHub, Google, and email/username*
-
-### Password Vault
-<img src="./screenshots/password-vault.png" alt="Password Vault" width="800">
-
-*Main password management interface with add new entry functionality and export options*
-
 ## Technology Stack
 
-- **Frontend**: Modern web technologies with responsive design
-- **Authentication**: Clerk authentication service
-- **Security**: End-to-end encryption
-- **UI/UX**: Clean, professional interface with dark mode support
+### Frontend
+- **React**: Modern JavaScript library for building user interfaces
+- **Tailwind CSS**: Utility-first CSS framework for responsive design
+- **Dark Mode Support**: Theme switching functionality
 
-## Getting Started
+### Backend
+- **Node.js**: JavaScript runtime environment
+- **Express.js**: Web application framework for Node.js
+- **RESTful APIs**: Structured API endpoints for data management
 
-### Prerequisites
-- Modern web browser
-- Internet connection for authentication services
+### Database
+- **MongoDB**: NoSQL database for storing user data and password entries
+- **Mongoose**: Object Data Modeling (ODM) library for MongoDB
 
-### Installation
-1. Clone the repository
-2. Install dependencies
-3. Configure environment variables for Clerk authentication
-4. Run the development server
+### Authentication & Security
+- **Clerk**: Complete authentication solution with OAuth support
+- **10 Rounds of Encryption**: Advanced encryption algorithm with 10 rounds for maximum security
+- **Password Hashing**: Secure password storage with industry-standard hashing
+- **JWT Tokens**: JSON Web Tokens for secure session management
 
-### Usage
-1. Visit the application URL
-2. Sign in using your preferred authentication method
-3. Start adding your password entries
-4. Use the export feature to backup your data
-5. Toggle between light and dark modes as needed
+### Additional Technologies
+- **PDF Generation**: Export functionality for password data
+- **Cross-Platform Compatibility**: Web-based solution working across all devices
 
 ## Security Features
 
