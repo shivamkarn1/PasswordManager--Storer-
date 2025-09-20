@@ -4,7 +4,7 @@
   "description": "Secure password manager by Shivam Karn",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#02050a",
   "theme_color": "#3b82f6",
   "orientation": "portrait-primary",
   "icons": [
