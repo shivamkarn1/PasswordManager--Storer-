@@ -3,10 +3,28 @@
 
 <head>
   <meta charset="UTF-8" />
+
+  <!-- Standard favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/vite.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/vite.png" />
-  <link rel="apple-touch-icon" href="/vite.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Apple Touch Icon (iOS) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/vite.png" />
+
+  <!-- Android Chrome -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/vite.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/vite.png" />
+
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Mobile optimization -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#000000" />
+
   <title>Shivam's Vault</title>
 
   <!-- Custom Fonts -->
@@ -16,7 +34,15 @@
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- Loading screen -->
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0;">
+      <div style="text-align: center;">
+        <img src="/vite.png" alt="Loading..." style="width: 64px; height: 64px; margin-bottom: 16px;" />
+        <p style="font-family: 'Fira Mono', monospace; color: #666;">Loading Shivam's Vault...</p>
+      </div>
+    </div>
+  </div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
