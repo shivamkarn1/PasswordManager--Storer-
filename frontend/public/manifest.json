@@ -1,23 +1,9 @@
 {
   "name": "Your Secure Vault",
   "short_name": "Vault",
-  "description": "Secure password manager by Shivam Karn",
+  "description": "Secure password manager by Shivam",
   "start_url": "/",
-  "display": "standalone",
-  "background_color": "#02050a",
-  "theme_color": "#3b82f6",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "/bluelogo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/web-app-manifest-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "display": "browser",
+  "background_color": "#000000",
+  "theme_color": "#000000"
 }
