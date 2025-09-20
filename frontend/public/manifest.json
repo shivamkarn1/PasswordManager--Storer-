@@ -1,10 +1,10 @@
 {
-  "name": "Shivam's Vault - Password Manager",
+  "name": "Your Password Manager",
   "short_name": "Vault",
   "description": "Secure Password Manager Application",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
+  "background_color": "#17172b",
   "theme_color": "#646cff",
   "icons": [
     {
