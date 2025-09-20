@@ -1,9 +1,20 @@
+import { useState, useEffect } from 'react';
 import Loader from './Loader';
-import { useTheme } from './ThemeContext';
 
 const LoadingScreen = () => {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Check localStorage first, then system preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme) {
+      setIsDark(savedTheme === 'dark');
+    } else {
+      setIsDark(systemPrefersDark);
+    }
+  }, []);
 
   return (
     <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-all duration-500 ${
