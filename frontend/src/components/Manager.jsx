@@ -15,9 +15,6 @@ function Manager() {
   const { currentTheme, isDarkMode, isTransitioning } = useTheme();
   const [passwords, setPasswords] = useState([]);
   const [form, setForm] = useState({ website: "", username: "", password: "" });
-  const [loading, setLoading] = useState(false); // For initial data loading
-  const [formLoading, setFormLoading] = useState(false); // For form submission
-  const [deleteLoading, setDeleteLoading] = useState(false); // For delete operations
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState({});
   const [copyFeedback, setCopyFeedback] = useState({});
@@ -89,7 +86,6 @@ function Manager() {
       if (!isSignedIn) return;
       
       try {
-        setLoading(true);
         setError("");
         const token = await getToken();
         if (token) {
@@ -115,8 +111,6 @@ function Manager() {
           duration: 3000,
           style: getToastStyle('error'),
         });
-      } finally {
-        setLoading(false);
       }
     };
     
@@ -141,7 +135,6 @@ function Manager() {
     }
 
     try {
-      setFormLoading(true);
       setError("");
       const token = await getToken();
       
@@ -177,14 +170,11 @@ function Manager() {
         duration: 3000,
         style: getToastStyle('error'),
       });
-    } finally {
-      setFormLoading(false);
     }
   };
 
    const handleDelete = async (id) => {
     try {
-      setDeleteLoading(true);
       const token = await getToken();
       
       if (!token) {
@@ -219,8 +209,6 @@ function Manager() {
         duration: 3000,
         style: getToastStyle('error'),
       });
-    } finally {
-      setDeleteLoading(false);
     }
   };
 
@@ -531,30 +519,17 @@ function Manager() {
                   type="submit" 
                   className={`
                     h-12 px-8 font-semibold text-base rounded-xl shadow-lg transition-all duration-200 
-                    transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center gap-2 font-source-code
+                    transform hover:scale-105 flex items-center gap-2 font-source-code
                     ${isDarkMode 
                       ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900' 
                       : 'bg-zinc-900 hover:bg-zinc-800 text-white'
                     }
                   `}
-                  disabled={formLoading}
                 >
-                  {formLoading ? (
-                    <>
-                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Securing...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      Save
-                    </>
-                  )}
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  Save
                 </button>
               </div>
             </form>
@@ -616,22 +591,7 @@ function Manager() {
               )}
             </div>
 
-            {loading && passwords.length === 0 ? (
-              <div className="text-center py-12">
-                <div className={`
-                  inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 transition-all duration-300
-                  ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-100'}
-                `}>
-                  <svg className={`w-8 h-8 animate-spin transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`} fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                </div>
-                <p className={`font-source-code transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                  Loading your secure vault...
-                </p>
-              </div>
-            ) : passwords.length === 0 ? (
+            {passwords.length === 0 ? (
               <div className="text-center py-12">
                 <div className={`
                   inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 transition-all duration-300
@@ -654,8 +614,9 @@ function Manager() {
                   inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 transition-all duration-300
                   ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-100'}
                 `}>
-                  <svg className={`w-8 h-8 transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`} fill="currentColor" viewBox="0 0 20 20"/>
+                  <svg className={`w-8 h-8 transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`} fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                  </svg>
                 </div>
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Handlee', cursive" }}>
                   No passwords found
@@ -704,23 +665,14 @@ function Manager() {
                               <button
                                 onClick={() => handleDelete(password._id)}
                                 className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 text-xs"
-                                disabled={deleteLoading}
                               >
-                                {deleteLoading ? (
-                                  <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                  </svg>
-                                ) : (
-                                  <MdDeleteForever className="w-3 h-3" />
-                                )}
+                                <MdDeleteForever className="w-3 h-3" />
                               </button>
                               <button
                                 onClick={() => setDeleteConfirm(null)}
                                 className={`p-2 rounded-lg transition-colors duration-200 text-xs ${
                                   isDarkMode ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                                 }`}
-                                disabled={deleteLoading}
                               >
                                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -965,29 +917,15 @@ function Manager() {
                       : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200'
                     }
                   `}
-                  disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDelete(deleteConfirm)}
                   className="flex-1 h-11 px-4 bg-red-500 hover:bg-red-600 text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
-                  disabled={deleteLoading}
                 >
-                  {deleteLoading ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Deleting...
-                    </>
-                  ) : (
-                    <>
-                      <RiDeleteBin6Line className="w-4 h-4" />
-                      Delete
-                    </>
-                  )}
+                  <RiDeleteBin6Line className="w-4 h-4" />
+                  Delete
                 </button>
               </div>
             </div>
