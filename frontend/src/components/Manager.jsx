@@ -583,7 +583,7 @@ function Manager() {
                   </div>
                   <input
                     type="text"
-                    placeholder="Search passwords..."
+                    placeholder="Search by Platform name......"
                     value={searchTerm}
                     onChange={handleSearchChange}
                     className={`
