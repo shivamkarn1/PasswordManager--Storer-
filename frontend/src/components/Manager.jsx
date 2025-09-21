@@ -34,6 +34,9 @@ function Manager() {
   // Add loading state
   const [isLoading, setIsLoading] = useState(true);
 
+  // Add saving state for the button
+  const [isSaving, setIsSaving] = useState(false);
+
   // Enhanced toast styling function
   const getToastStyle = (type = 'default') => {
     if (isDarkMode) {
@@ -144,6 +147,7 @@ function Manager() {
     }
 
     try {
+      setIsSaving(true); // Start saving state
       setError("");
       const token = await getToken();
       
@@ -179,6 +183,8 @@ function Manager() {
         duration: 3000,
         style: getToastStyle('error'),
       });
+    } finally {
+      setIsSaving(false); // End saving state
     }
   };
 
@@ -254,6 +260,33 @@ function Manager() {
       });
     }
   };
+
+  // Typing dots animation component
+  const TypingDots = () => (
+    <div className="flex items-center space-x-1">
+      <div 
+        className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDarkMode ? 'bg-zinc-600' : 'bg-white/60'}`}
+        style={{ 
+          animationDelay: '0ms',
+          animationDuration: '1.4s'
+        }}
+      ></div>
+      <div 
+        className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDarkMode ? 'bg-zinc-600' : 'bg-white/60'}`}
+        style={{ 
+          animationDelay: '200ms',
+          animationDuration: '1.4s'
+        }}
+      ></div>
+      <div 
+        className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDarkMode ? 'bg-zinc-600' : 'bg-white/60'}`}
+        style={{ 
+          animationDelay: '400ms',
+          animationDuration: '1.4s'
+        }}
+      ></div>
+    </div>
+  );
 
   if (!isSignedIn) {
     return (
@@ -526,19 +559,58 @@ function Manager() {
               <div className="flex justify-center pt-4">
                 <button 
                   type="submit" 
+                  disabled={isSaving}
                   className={`
-                    h-12 px-8 font-semibold text-base rounded-xl shadow-lg transition-all duration-200 
-                    transform hover:scale-105 flex items-center gap-2 font-source-code
+                    relative h-12 px-8 font-semibold text-base rounded-xl shadow-lg transition-all duration-300
+                    font-source-code overflow-hidden min-w-[120px]
+                    ${isSaving 
+                      ? 'cursor-not-allowed scale-95' 
+                      : 'transform hover:scale-105 cursor-pointer'
+                    }
                     ${isDarkMode 
-                      ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900' 
-                      : 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                      ? `${isSaving 
+                          ? 'bg-zinc-700 text-zinc-400 border border-zinc-600' 
+                          : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900'
+                        }` 
+                      : `${isSaving 
+                          ? 'bg-zinc-600 text-zinc-300 border border-zinc-500' 
+                          : 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                        }`
                     }
                   `}
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Save
+                  <div className={`
+                    flex items-center justify-center gap-2 transition-all duration-300
+                    ${isSaving ? 'opacity-100' : 'opacity-100'}
+                  `}>
+                    {isSaving ? (
+                      <>
+                        <div className={`
+                          w-5 h-5 rounded flex items-center justify-center
+                          ${isDarkMode ? 'bg-zinc-600' : 'bg-zinc-500'}
+                        `}>
+                          <TypingDots />
+                        </div>
+                        <span className="select-none">Saving</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Save</span>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Subtle background animation during saving */}
+                  {isSaving && (
+                    <div className={`
+                      absolute inset-0 opacity-20
+                      ${isDarkMode ? 'bg-gradient-to-r from-zinc-600 via-zinc-500 to-zinc-600' : 'bg-gradient-to-r from-zinc-700 via-zinc-600 to-zinc-700'}
+                      animate-pulse
+                    `}></div>
+                  )}
                 </button>
               </div>
             </form>
@@ -578,8 +650,9 @@ function Manager() {
               {passwords.length > 0 && !isLoading && (
                 <div className="relative w-full md:w-80">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className={`w-5 h-5 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-500'}`} fill="currentColor" viewBox="0 0 20 20"/>
+                    <svg className={`w-5 h-5 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-500'}`} fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                      </svg>
                   </div>
                   <input
                     type="text"
