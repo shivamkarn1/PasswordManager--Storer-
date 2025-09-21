@@ -15,6 +15,9 @@ function Manager() {
   const { currentTheme, isDarkMode, isTransitioning } = useTheme();
   const [passwords, setPasswords] = useState([]);
   const [form, setForm] = useState({ website: "", username: "", password: "" });
+  const [loading, setLoading] = useState(false); // For initial data loading
+  const [formLoading, setFormLoading] = useState(false); // For form submission
+  const [deleteLoading, setDeleteLoading] = useState(false); // For delete operations
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState({});
   const [copyFeedback, setCopyFeedback] = useState({});
@@ -30,18 +33,6 @@ function Manager() {
   
   // State for showing password in form input
   const [showFormPassword, setShowFormPassword] = useState(false);
-
-  // Add loading state
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Add saving state for the button
-  const [isSaving, setIsSaving] = useState(false);
-
-  // Add deleting state for individual items
-  const [deletingItems, setDeletingItems] = useState(new Set());
-
-  // Add copying state for individual items
-  const [copyingItems, setCopyingItems] = useState(new Set());
 
   // Enhanced toast styling function
   const getToastStyle = (type = 'default') => {
@@ -95,13 +86,10 @@ function Manager() {
 
   useEffect(() => {
     const loadPasswords = async () => {
-      if (!isSignedIn) {
-        setIsLoading(false);
-        return;
-      }
+      if (!isSignedIn) return;
       
       try {
-        setIsLoading(true);
+        setLoading(true);
         setError("");
         const token = await getToken();
         if (token) {
@@ -128,7 +116,7 @@ function Manager() {
           style: getToastStyle('error'),
         });
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
     
@@ -153,7 +141,7 @@ function Manager() {
     }
 
     try {
-      setIsSaving(true); // Start saving state
+      setFormLoading(true);
       setError("");
       const token = await getToken();
       
@@ -190,15 +178,13 @@ function Manager() {
         style: getToastStyle('error'),
       });
     } finally {
-      setIsSaving(false); // End saving state
+      setFormLoading(false);
     }
   };
 
    const handleDelete = async (id) => {
     try {
-      // Add to deleting items set
-      setDeletingItems(prev => new Set(prev).add(id));
-      
+      setDeleteLoading(true);
       const token = await getToken();
       
       if (!token) {
@@ -234,12 +220,7 @@ function Manager() {
         style: getToastStyle('error'),
       });
     } finally {
-      // Remove from deleting items set
-      setDeletingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
+      setDeleteLoading(false);
     }
   };
 
@@ -256,9 +237,6 @@ function Manager() {
 
   const copyToClipboard = async (text, type, id) => {
     try {
-      // Add to copying items set
-      setCopyingItems(prev => new Set(prev).add(`${id}-${type}`));
-      
       await navigator.clipboard.writeText(text);
       setCopyFeedback({ [id]: type });
       setTimeout(() => setCopyFeedback({}), 2000);
@@ -277,49 +255,8 @@ function Manager() {
         duration: 2500,
         style: getToastStyle('error'),
       });
-    } finally {
-      // Remove from copying items set after a brief delay
-      setTimeout(() => {
-        setCopyingItems(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(`${id}-${type}`);
-          return newSet;
-        });
-      }, 300);
     }
   };
-
-  // Typing dots animation component
-  const TypingDots = () => (
-    <div className="flex items-center space-x-1">
-      <div 
-        className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDarkMode ? 'bg-zinc-600' : 'bg-white/60'}`}
-        style={{ 
-          animationDelay: '0ms',
-          animationDuration: '1.4s'
-        }}
-      ></div>
-      <div 
-        className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDarkMode ? 'bg-zinc-600' : 'bg-white/60'}`}
-        style={{ 
-          animationDelay: '200ms',
-          animationDuration: '1.4s'
-        }}
-      ></div>
-      <div 
-        className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDarkMode ? 'bg-zinc-600' : 'bg-white/60'}`}
-        style={{ 
-          animationDelay: '400ms',
-          animationDuration: '1.4s'
-        }}
-      ></div>
-    </div>
-  );
-
-  // Small spinner component for buttons
-  const MiniSpinner = ({ size = 'w-4 h-4' }) => (
-    <div className={`${size} animate-spin rounded-full border-b-2 border-current opacity-70`}></div>
-  );
 
   if (!isSignedIn) {
     return (
@@ -592,57 +529,31 @@ function Manager() {
               <div className="flex justify-center pt-4">
                 <button 
                   type="submit" 
-                  disabled={isSaving}
                   className={`
-                    relative h-12 px-8 font-semibold text-base rounded-xl shadow-lg transition-all duration-300
-                    font-source-code overflow-hidden min-w-[120px]
-                    ${isSaving 
-                      ? 'cursor-not-allowed scale-95' 
-                      : 'transform hover:scale-105 cursor-pointer'
-                    }
+                    h-12 px-8 font-semibold text-base rounded-xl shadow-lg transition-all duration-200 
+                    transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center gap-2 font-source-code
                     ${isDarkMode 
-                      ? `${isSaving 
-                          ? 'bg-zinc-700 text-zinc-400 border border-zinc-600' 
-                          : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900'
-                        }` 
-                      : `${isSaving 
-                          ? 'bg-zinc-600 text-zinc-300 border border-zinc-500' 
-                          : 'bg-zinc-900 hover:bg-zinc-800 text-white'
-                        }`
+                      ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900' 
+                      : 'bg-zinc-900 hover:bg-zinc-800 text-white'
                     }
                   `}
+                  disabled={formLoading}
                 >
-                  <div className={`
-                    flex items-center justify-center gap-2 transition-all duration-300
-                    ${isSaving ? 'opacity-100' : 'opacity-100'}
-                  `}>
-                    {isSaving ? (
-                      <>
-                        <div className={`
-                          w-5 h-5 rounded flex items-center justify-center
-                          ${isDarkMode ? 'bg-zinc-600' : 'bg-zinc-500'}
-                        `}>
-                          <TypingDots />
-                        </div>
-                        <span className="select-none">Saving</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span>Save</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  {/* Subtle background animation during saving */}
-                  {isSaving && (
-                    <div className={`
-                      absolute inset-0 opacity-20
-                      ${isDarkMode ? 'bg-gradient-to-r from-zinc-600 via-zinc-500 to-zinc-600' : 'bg-gradient-to-r from-zinc-700 via-zinc-600 to-zinc-700'}
-                      animate-pulse
-                    `}></div>
+                  {formLoading ? (
+                    <>
+                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Securing...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Save
+                    </>
                   )}
                 </button>
               </div>
@@ -674,22 +585,22 @@ function Manager() {
                     Your Secure Vault
                   </h2>
                   <p className={`text-sm font-source-code transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                    {isLoading ? 'Loading your credentials...' : `${filteredPasswords.length} of ${passwords.length} ${passwords.length === 1 ? 'entry' : 'entries'}`}
+                    {filteredPasswords.length} of {passwords.length} {passwords.length === 1 ? 'entry' : 'entries'}
                   </p>
                 </div>
               </div>
 
               {/* Search Bar */}
-              {passwords.length > 0 && !isLoading && (
+              {passwords.length > 0 && (
                 <div className="relative w-full md:w-80">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className={`w-5 h-5 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-500'}`} fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                      </svg>
+                    </svg>
                   </div>
                   <input
                     type="text"
-                    placeholder="Search by Platform name......"
+                    placeholder="Search passwords..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                     className={`
@@ -705,62 +616,20 @@ function Manager() {
               )}
             </div>
 
-            {isLoading ? (
-              // Loading State
-              <div className="text-center py-16">
+            {loading && passwords.length === 0 ? (
+              <div className="text-center py-12">
                 <div className={`
-                  inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 relative transition-all duration-300
+                  inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 transition-all duration-300
                   ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-100'}
                 `}>
-                  <div className={`
-                    animate-spin rounded-full h-8 w-8 border-b-2 transition-colors duration-300
-                    ${isDarkMode ? 'border-zinc-400' : 'border-zinc-600'}
-                  `}></div>
-                  <div className={`
-                    absolute inset-0 rounded-xl animate-pulse transition-all duration-300
-                    ${isDarkMode ? 'bg-zinc-400/10' : 'bg-zinc-600/10'}
-                  `}></div>
+                  <svg className={`w-8 h-8 animate-spin transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`} fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
                 </div>
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Handlee', cursive" }}>
-                  Loading Your Credentials
-                </h3>
                 <p className={`font-source-code transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                  Securely fetching your encrypted passwords...
+                  Loading your secure vault...
                 </p>
-                
-                {/* Loading skeleton cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8">
-                  {[1, 2, 3, 4, 5, 6].map((index) => (
-                    <div 
-                      key={index}
-                      className={`
-                        rounded-2xl p-6 border transition-all duration-300 animate-pulse
-                        ${isDarkMode 
-                          ? 'bg-gray-800/30 border-gray-700/30' 
-                          : 'bg-gray-100/50 border-gray-200/50'
-                        }
-                      `}
-                    >
-                      <div className="flex items-center space-x-3 mb-4">
-                        <div className={`w-10 h-10 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></div>
-                        <div className="flex-1">
-                          <div className={`h-4 rounded mb-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`} style={{ width: '70%' }}></div>
-                          <div className={`h-3 rounded ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`} style={{ width: '50%' }}></div>
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <div>
-                          <div className={`h-3 rounded mb-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`} style={{ width: '30%' }}></div>
-                          <div className={`h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`} style={{ width: '80%' }}></div>
-                        </div>
-                        <div>
-                          <div className={`h-3 rounded mb-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`} style={{ width: '35%' }}></div>
-                          <div className={`h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`} style={{ width: '60%' }}></div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
             ) : passwords.length === 0 ? (
               <div className="text-center py-12">
@@ -785,9 +654,8 @@ function Manager() {
                   inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 transition-all duration-300
                   ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-100'}
                 `}>
-                  <svg className={`w-8 h-8 transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                  <svg className={`w-8 h-8 transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`} fill="currentColor" viewBox="0 0 20 20"/>
                     <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                  </svg>
                 </div>
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Handlee', cursive" }}>
                   No passwords found
@@ -800,126 +668,153 @@ function Manager() {
               <>
                 {/* Responsive Grid - Compact Mobile Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {currentPasswords.map((password) => {
-                    const isDeleting = deletingItems.has(password._id);
-                    
-                    return (
-                      <div 
-                        key={password._id} 
-                        className={`
-                          relative group rounded-2xl p-4 md:p-6 border transition-all duration-300 transform 
-                          ${isDeleting 
-                            ? 'scale-95 opacity-50' 
-                            : 'hover:scale-[1.02] opacity-100'
-                          }
-                          ${isDarkMode 
-                            ? 'bg-gray-800/50 hover:bg-gray-800/70 border-gray-700/50 hover:border-gray-600' 
-                            : 'bg-white hover:bg-gray-50 border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg'
-                          }
-                        `}
-                      >
-                        {/* Mobile-Optimized Header */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center space-x-3 min-w-0 flex-1">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                              isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
-                            }`}>
-                              {password.website.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h3 className={`font-semibold text-base md:text-lg leading-tight truncate ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                                {password.website}
-                              </h3>
-                              <p className={`text-xs text-gray-500 dark:text-gray-400 truncate`}>
-                                {new Date(password.createdAt).toLocaleDateString()}
-                              </p>
-                            </div>
+                  {currentPasswords.map((password) => (
+                    <div 
+                      key={password._id} 
+                      className={`
+                        relative group rounded-2xl p-4 md:p-6 border transition-all duration-300 transform hover:scale-[1.02]
+                        ${isDarkMode 
+                          ? 'bg-gray-800/50 hover:bg-gray-800/70 border-gray-700/50 hover:border-gray-600' 
+                          : 'bg-white hover:bg-gray-50 border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg'
+                        }
+                      `}
+                    >
+                      {/* Mobile-Optimized Header */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-3 min-w-0 flex-1">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                            isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                          }`}>
+                            {password.website.charAt(0).toUpperCase()}
                           </div>
-                          
-                          {/* Quick Actions */}
-                          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 md:opacity-100 transition-opacity duration-200">
-                            {deleteConfirm === password._id ? (
-                              <div className="flex space-x-1">
-                                <button
-                                  onClick={() => handleDelete(password._id)}
-                                  disabled={isDeleting}
-                                  className={`
-                                    p-2 text-white rounded-lg transition-all duration-200 text-xs flex items-center justify-center min-w-[2rem]
-                                    ${isDeleting 
-                                      ? 'bg-red-400 cursor-not-allowed' 
-                                      : 'bg-red-500 hover:bg-red-600'
-                                    }
-                                  `}
-                                >
-                                  {isDeleting ? (
-                                    <MiniSpinner size="w-3 h-3" />
-                                  ) : (
-                                    <MdDeleteForever className="w-3 h-3" />
-                                  )}
-                                </button>
-                                <button
-                                  onClick={() => setDeleteConfirm(null)}
-                                  disabled={isDeleting}
-                                  className={`
-                                    p-2 rounded-lg transition-colors duration-200 text-xs
-                                    ${isDeleting 
-                                      ? 'opacity-50 cursor-not-allowed' 
-                                      : isDarkMode 
-                                        ? 'bg-gray-600 hover:bg-gray-700 text-white' 
-                                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                                    }
-                                  `}
-                                >
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                  </svg>
-                                </button>
-                              </div>
-                            ) : (
-                              <button
-                                onClick={() => setDeleteConfirm(password._id)}
-                                disabled={isDeleting}
-                                className={`
-                                  p-2 rounded-lg transition-colors duration-200
-                                  ${isDeleting 
-                                    ? 'opacity-50 cursor-not-allowed' 
-                                    : isDarkMode 
-                                      ? 'hover:bg-red-900/30 text-red-400 hover:text-red-300' 
-                                      : 'hover:bg-red-50 text-red-500 hover:text-red-600'
-                                  }
-                                `}
-                              >
-                                <RiDeleteBin6Line className="w-4 h-4" />
-                              </button>
-                            )}
+                          <div className="min-w-0 flex-1">
+                            <h3 className={`font-semibold text-base md:text-lg leading-tight truncate ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {password.website}
+                            </h3>
+                            <p className={`text-xs text-gray-500 dark:text-gray-400 truncate`}>
+                              {new Date(password.createdAt).toLocaleDateString()}
+                            </p>
                           </div>
                         </div>
-
-                        {/* Compact Info Grid */}
-                        <div className="space-y-3">
-                          {/* Username Row */}
-                          <div className="group/item">
-                            <div className="flex items-center justify-between">
-                              <label className={`text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                Username
-                              </label>
+                        
+                        {/* Quick Actions */}
+                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 md:opacity-100 transition-opacity duration-200">
+                          {deleteConfirm === password._id ? (
+                            <div className="flex space-x-1">
                               <button
-                                onClick={() => copyToClipboard(password.username, 'username', password._id)}
-                                disabled={copyingItems.has(`${password._id}-username`) || isDeleting}
-                                className={`
-                                  opacity-0 group-hover/item:opacity-100 md:opacity-100 p-2 rounded-lg transition-all duration-200 hover:scale-110 flex items-center justify-center min-w-[2rem]
-                                  ${copyingItems.has(`${password._id}-username`) || isDeleting
-                                    ? 'opacity-50 cursor-not-allowed' 
-                                    : isDarkMode 
-                                      ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
-                                      : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
-                                  }
-                                `}
-                                title="Copy username"
+                                onClick={() => handleDelete(password._id)}
+                                className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 text-xs"
+                                disabled={deleteLoading}
                               >
-                                {copyingItems.has(`${password._id}-username`) ? (
-                                  <MiniSpinner />
-                                ) : copyFeedback[password._id] === 'username' ? (
+                                {deleteLoading ? (
+                                  <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                ) : (
+                                  <MdDeleteForever className="w-3 h-3" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirm(null)}
+                                className={`p-2 rounded-lg transition-colors duration-200 text-xs ${
+                                  isDarkMode ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                                }`}
+                                disabled={deleteLoading}
+                              >
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setDeleteConfirm(password._id)}
+                              className={`p-2 rounded-lg transition-colors duration-200 ${
+                                isDarkMode 
+                                  ? 'hover:bg-red-900/30 text-red-400 hover:text-red-300' 
+                                  : 'hover:bg-red-50 text-red-500 hover:text-red-600'
+                              }`}
+                            >
+                              <RiDeleteBin6Line className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Compact Info Grid */}
+                      <div className="space-y-3">
+                        {/* Username Row */}
+                        <div className="group/item">
+                          <div className="flex items-center justify-between">
+                            <label className={`text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              Username
+                            </label>
+                            <button
+                              onClick={() => copyToClipboard(password.username, 'username', password._id)}
+                              className={`opacity-0 group-hover/item:opacity-100 md:opacity-100 p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                                isDarkMode 
+                                  ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+                                  : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
+                              }`}
+                              title="Copy username"
+                            >
+                              {copyFeedback[password._id] === 'username' ? (
+                                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+                                  <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+                                </svg>
+                              )}
+                            </button>
+                          </div>
+                          <p className={`text-sm font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
+                             style={{ fontFamily: '"Fira Code", "JetBrains Mono", monospace' }}>
+                            {password.username}
+                          </p>
+                        </div>
+
+                        {/* Password Row */}
+                        <div className="group/item">
+                          <div className="flex items-center justify-between">
+                            <label className={`text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              Password
+                            </label>
+                            <div className="flex items-center space-x-2 opacity-0 group-hover/item:opacity-100 md:opacity-100 transition-opacity duration-200">
+                              <button
+                                onClick={() => togglePasswordVisibility(password._id)}
+                                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                                  isDarkMode 
+                                    ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+                                    : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
+                                }`}
+                                title={showPassword[password._id] ? "Hide password" : "Show password"}
+                              >
+                                {showPassword[password._id] ? (
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd"/>
+                                    <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                                  </svg>
+                                ) : (
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
+                                  </svg>
+                                )}
+                              </button>
+                              <button
+                                onClick={() => copyToClipboard(password.password, 'password', password._id)}
+                                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                                  isDarkMode 
+                                    ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+                                    : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
+                                }`}
+                                title="Copy password"
+                              >
+                                {copyFeedback[password._id] === 'password' ? (
                                   <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                   </svg>
@@ -931,172 +826,87 @@ function Manager() {
                                 )}
                               </button>
                             </div>
-                            <p className={`text-sm font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
-                               style={{ fontFamily: '"Fira Code", "JetBrains Mono", monospace' }}>
-                              {password.username}
-                            </p>
                           </div>
-
-                          {/* Password Row */}
-                          <div className="group/item">
-                            <div className="flex items-center justify-between">
-                              <label className={`text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                Password
-                              </label>
-                              <div className="flex items-center space-x-2 opacity-0 group-hover/item:opacity-100 md:opacity-100 transition-opacity duration-200">
-                                <button
-                                  onClick={() => togglePasswordVisibility(password._id)}
-                                  disabled={isDeleting}
-                                  className={`
-                                    p-2 rounded-lg transition-all duration-200 hover:scale-110
-                                    ${isDeleting 
-                                      ? 'opacity-50 cursor-not-allowed' 
-                                      : isDarkMode 
-                                        ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
-                                        : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
-                                    }
-                                  `}
-                                  title={showPassword[password._id] ? "Hide password" : "Show password"}
-                                >
-                                  {showPassword[password._id] ? (
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd"/>
-                                      <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
-                                    </svg>
-                                  ) : (
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
-                                    </svg>
-                                  )}
-                                </button>
-                                <button
-                                  onClick={() => copyToClipboard(password.password, 'password', password._id)}
-                                  disabled={copyingItems.has(`${password._id}-password`) || isDeleting}
-                                  className={`
-                                    p-2 rounded-lg transition-all duration-200 hover:scale-110 flex items-center justify-center min-w-[2rem]
-                                    ${copyingItems.has(`${password._id}-password`) || isDeleting
-                                      ? 'opacity-50 cursor-not-allowed' 
-                                      : isDarkMode 
-                                        ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
-                                        : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
-                                    }
-                                  `}
-                                  title="Copy password"
-                                >
-                                  {copyingItems.has(`${password._id}-password`) ? (
-                                    <MiniSpinner />
-                                  ) : copyFeedback[password._id] === 'password' ? (
-                                    <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                  ) : (
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
-                                      <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
-                                    </svg>
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-                            <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
-                               style={{ fontFamily: '"Fira Code", "JetBrains Mono", monospace' }}>
-                              {showPassword[password._id] 
-                                ? password.password 
-                                : '●'.repeat(Math.min(password.password.length, 8))
-                              }
-                            </p>
-                          </div>
+                          <p className={`text-sm font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
+                             style={{ fontFamily: '"Fira Code", "JetBrains Mono", monospace' }}>
+                            {showPassword[password._id] ? password.password : '••••••••••••'}
+                          </p>
                         </div>
-
-                        {/* Loading overlay for deleting state */}
-                        {isDeleting && (
-                          <div className="absolute inset-0 bg-black/20 rounded-2xl flex items-center justify-center">
-                            <div className={`
-                              px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium
-                              ${isDarkMode ? 'bg-zinc-800 text-zinc-200' : 'bg-white text-zinc-700'}
-                            `}>
-                              <MiniSpinner />
-                              <span>Deleting...</span>
-                            </div>
-                          </div>
-                        )}
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
 
-                {/* Pagination */}
+                {/* Enhanced Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-700">
-                    <div className={`text-sm font-source-code ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 gap-4">
+                    <div className={`text-sm font-source-code ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                       Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredPasswords.length)} of {filteredPasswords.length} entries
                     </div>
                     
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                         disabled={currentPage === 1}
                         className={`
-                          px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                          ${currentPage === 1
-                            ? 'opacity-50 cursor-not-allowed'
-                            : isDarkMode 
-                              ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200' 
-                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                          px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1
+                          ${currentPage === 1 
+                            ? 'opacity-50 cursor-not-allowed' 
+                            : 'hover:scale-105'
+                          }
+                          ${isDarkMode 
+                            ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700' 
+                            : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm'
                           }
                         `}
                       >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
                         Previous
                       </button>
-                      
+
                       <div className="flex items-center space-x-1">
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                          if (totalPages <= 7 || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                            return (
-                              <button
-                                key={page}
-                                onClick={() => setCurrentPage(page)}
-                                className={`
-                                  w-10 h-10 rounded-lg text-sm font-medium transition-all duration-200
-                                  ${page === currentPage
-                                    ? isDarkMode 
-                                      ? 'bg-zinc-100 text-zinc-900' 
-                                      : 'bg-zinc-900 text-white'
-                                    : isDarkMode 
-                                      ? 'hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200' 
-                                      : 'hover:bg-zinc-100 text-zinc-600 hover:text-zinc-900'
-                                  }
-                                `}
-                              >
-                                {page}
-                              </button>
-                            );
-                          } else if (page === currentPage - 2 || page === currentPage + 2) {
-                            return (
-                              <span key={page} className={`px-2 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                                ...
-                              </span>
-                            );
-                          }
-                          return null;
-                        })}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`
+                              w-10 h-10 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105
+                              ${page === currentPage
+                                ? isDarkMode 
+                                  ? 'bg-blue-600 text-white shadow-lg' 
+                                  : 'bg-blue-500 text-white shadow-lg'
+                                : isDarkMode 
+                                  ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700' 
+                                  : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm'
+                              }
+                            `}
+                          >
+                            {page}
+                          </button>
+                        ))}
                       </div>
-                      
+
                       <button
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                         disabled={currentPage === totalPages}
                         className={`
-                          px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                          ${currentPage === totalPages
-                            ? 'opacity-50 cursor-not-allowed'
-                            : isDarkMode 
-                              ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200' 
-                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                          px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1
+                          ${currentPage === totalPages 
+                            ? 'opacity-50 cursor-not-allowed' 
+                            : 'hover:scale-105'
+                          }
+                          ${isDarkMode 
+                            ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700' 
+                            : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm'
                           }
                         `}
                       >
                         Next
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                        </svg>
                       </button>
                     </div>
                   </div>
@@ -1105,10 +915,87 @@ function Manager() {
             )}
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className={`
+              w-full max-w-md rounded-2xl p-6 shadow-2xl border transition-all duration-300
+              ${isDarkMode 
+                ? 'bg-zinc-900 border-zinc-700' 
+                : 'bg-white border-zinc-200'
+              }
+            `}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className={`
+                  w-12 h-12 rounded-xl flex items-center justify-center
+                  ${isDarkMode ? 'bg-red-900/30' : 'bg-red-100'}
+                `}>
+                  <svg className={`w-6 h-6 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Handlee', cursive" }}>
+                    Confirm Deletion
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                    This action cannot be undone
+                  </p>
+                </div>
+              </div>
+              
+              <div className={`p-4 rounded-xl mb-6 ${isDarkMode ? 'bg-zinc-800/50' : 'bg-zinc-50'}`}>
+                <p className={`text-sm font-medium ${isDarkMode ? 'text-zinc-200' : 'text-zinc-700'}`}>
+                  Are you sure you want to delete the password for{' '}
+                  <span className="font-semibold">
+                    {passwords.find(p => p._id === deleteConfirm)?.website}
+                  </span>
+                  ?
+                </p>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setDeleteConfirm(null)}
+                  className={`
+                    flex-1 h-11 px-4 font-medium rounded-xl transition-all duration-200 border
+                    ${isDarkMode 
+                      ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border-zinc-700' 
+                      : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200'
+                    }
+                  `}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteConfirm)}
+                  className="flex-1 h-11 px-4 bg-red-500 hover:bg-red-600 text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                  disabled={deleteLoading}
+                >
+                  {deleteLoading ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <RiDeleteBin6Line className="w-4 h-4" />
+                      Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      
-      {/* Footer */}
-      <Footer />
+      {/* Footer Component */}
+        <Footer />
     </div>
   );
 }
