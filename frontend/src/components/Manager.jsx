@@ -31,6 +31,9 @@ function Manager() {
   // State for showing password in form input
   const [showFormPassword, setShowFormPassword] = useState(false);
 
+  // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
+
   // Enhanced toast styling function
   const getToastStyle = (type = 'default') => {
     if (isDarkMode) {
@@ -83,9 +86,13 @@ function Manager() {
 
   useEffect(() => {
     const loadPasswords = async () => {
-      if (!isSignedIn) return;
+      if (!isSignedIn) {
+        setIsLoading(false);
+        return;
+      }
       
       try {
+        setIsLoading(true);
         setError("");
         const token = await getToken();
         if (token) {
@@ -111,6 +118,8 @@ function Manager() {
           duration: 3000,
           style: getToastStyle('error'),
         });
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -560,18 +569,17 @@ function Manager() {
                     Your Secure Vault
                   </h2>
                   <p className={`text-sm font-source-code transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                    {filteredPasswords.length} of {passwords.length} {passwords.length === 1 ? 'entry' : 'entries'}
+                    {isLoading ? 'Loading your credentials...' : `${filteredPasswords.length} of ${passwords.length} ${passwords.length === 1 ? 'entry' : 'entries'}`}
                   </p>
                 </div>
               </div>
 
               {/* Search Bar */}
-              {passwords.length > 0 && (
+              {passwords.length > 0 && !isLoading && (
                 <div className="relative w-full md:w-80">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className={`w-5 h-5 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-500'}`} fill="currentColor" viewBox="0 0 20 20">
+                    <svg className={`w-5 h-5 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-500'}`} fill="currentColor" viewBox="0 0 20 20"/>
                       <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                    </svg>
                   </div>
                   <input
                     type="text"
@@ -591,7 +599,64 @@ function Manager() {
               )}
             </div>
 
-            {passwords.length === 0 ? (
+            {isLoading ? (
+              // Loading State
+              <div className="text-center py-16">
+                <div className={`
+                  inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 relative transition-all duration-300
+                  ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-100'}
+                `}>
+                  <div className={`
+                    animate-spin rounded-full h-8 w-8 border-b-2 transition-colors duration-300
+                    ${isDarkMode ? 'border-zinc-400' : 'border-zinc-600'}
+                  `}></div>
+                  <div className={`
+                    absolute inset-0 rounded-xl animate-pulse transition-all duration-300
+                    ${isDarkMode ? 'bg-zinc-400/10' : 'bg-zinc-600/10'}
+                  `}></div>
+                </div>
+                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`} style={{ fontFamily: "'Handlee', cursive" }}>
+                  Loading Your Credentials
+                </h3>
+                <p className={`font-source-code transition-colors duration-300 ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                  Securely fetching your encrypted passwords...
+                </p>
+                
+                {/* Loading skeleton cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8">
+                  {[1, 2, 3, 4, 5, 6].map((index) => (
+                    <div 
+                      key={index}
+                      className={`
+                        rounded-2xl p-6 border transition-all duration-300 animate-pulse
+                        ${isDarkMode 
+                          ? 'bg-gray-800/30 border-gray-700/30' 
+                          : 'bg-gray-100/50 border-gray-200/50'
+                        }
+                      `}
+                    >
+                      <div className="flex items-center space-x-3 mb-4">
+                        <div className={`w-10 h-10 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></div>
+                        <div className="flex-1">
+                          <div className={`h-4 rounded mb-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`} style={{ width: '70%' }}></div>
+                          <div className={`h-3 rounded ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`} style={{ width: '50%' }}></div>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <div className={`h-3 rounded mb-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`} style={{ width: '30%' }}></div>
+                          <div className={`h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`} style={{ width: '80%' }}></div>
+                        </div>
+                        <div>
+                          <div className={`h-3 rounded mb-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`} style={{ width: '35%' }}></div>
+                          <div className={`h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`} style={{ width: '60%' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : passwords.length === 0 ? (
               <div className="text-center py-12">
                 <div className={`
                   inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 transition-all duration-300
