@@ -34,5 +34,5 @@ passwordSchema.index({ userId: 1, website: 1 });
 
 export const Password = mongoose.model("Password", passwordSchema);
 
-// /* encryption is not needed here while saving as it's just for the
-// website / frontend saving so we skip those processes. */
+/* encryption is not needed here while saving as it's just for the
+ website  frontend saving so we skip those processes. */
