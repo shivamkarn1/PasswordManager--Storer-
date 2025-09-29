@@ -1,4 +1,3 @@
-// // THis model is for the password which user will store in the password storer website.
 
 import mongoose from "mongoose";
 
