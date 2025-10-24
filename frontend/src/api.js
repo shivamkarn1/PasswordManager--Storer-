@@ -1,14 +1,15 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export const savePassword = async (passwordData, token) => {
   try {
     const response = await fetch(`${API_BASE_URL}/passwords`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(passwordData)
+      body: JSON.stringify(passwordData),
     });
 
     const data = await response.json();
@@ -19,7 +20,7 @@ export const savePassword = async (passwordData, token) => {
 
     return data;
   } catch (error) {
-    console.error('Error saving password:', error);
+    console.error("Error saving password:", error);
     throw error;
   }
 };
@@ -27,11 +28,11 @@ export const savePassword = async (passwordData, token) => {
 export const fetchPasswords = async (token) => {
   try {
     const response = await fetch(`${API_BASE_URL}/passwords`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
 
     const data = await response.json();
@@ -42,7 +43,7 @@ export const fetchPasswords = async (token) => {
 
     return data;
   } catch (error) {
-    console.error('Error fetching passwords:', error);
+    console.error("Error fetching passwords:", error);
     throw error;
   }
 };
@@ -50,11 +51,11 @@ export const fetchPasswords = async (token) => {
 export const deletePassword = async (id, token) => {
   try {
     const response = await fetch(`${API_BASE_URL}/passwords/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
 
     const data = await response.json();
@@ -65,7 +66,31 @@ export const deletePassword = async (id, token) => {
 
     return data;
   } catch (error) {
-    console.error('Error deleting password:', error);
+    console.error("Error deleting password:", error);
+    throw error;
+  }
+};
+
+export const updatePassword = async (id, passwordData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/passwords/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(passwordData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error updating password:", error);
     throw error;
   }
 };
