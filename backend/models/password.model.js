@@ -48,46 +48,15 @@ passwordSchema.pre("save", function (next) {
   next();
 });
 
-// Ensure password is encrypted also when updated via query methods like
-// findOneAndUpdate or updateOne (pre 'save' does not run for those).
-passwordSchema.pre(["findOneAndUpdate", "updateOne"], function (next) {
-  try {
-    const update = this.getUpdate();
-    if (!update) return next();
-
-    // support both direct set and $set
-    let pwd;
-    if (typeof update.password === "string") pwd = update.password;
-    if (update.$set && typeof update.$set.password === "string")
-      pwd = update.$set.password;
-
-    if (!pwd) return next();
-
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv("aes-256-cbc", ENCRYPTION_KEY, iv);
-    const encrypted = cipher.update(pwd, "utf8", "hex") + cipher.final("hex");
-    const encryptedValue = iv.toString("hex") + "." + encrypted;
-
-    if (typeof update.password === "string") {
-      update.password = encryptedValue;
-    } else {
-      update.$set = update.$set || {};
-      update.$set.password = encryptedValue;
-    }
-
-    this.setUpdate(update);
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-});
-
 // Decrypt when needed
-
 passwordSchema.methods.decryptPassword = function () {
   try {
-    const parts = String(this.password).split(".");
-    if (parts.length !== 2) return "[Invalid Encrypted Format]";
+    const str = String(this.password);
+    const parts = str.split(".");
+    // If not in expected encrypted format, return the raw value unchanged.
+    if (parts.length !== 2) {
+      return str;
+    }
     const iv = Buffer.from(parts[0], "hex");
     const encrypted = parts[1];
     const decipher = crypto.createDecipheriv("aes-256-cbc", ENCRYPTION_KEY, iv);
