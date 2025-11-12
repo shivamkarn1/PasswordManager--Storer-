@@ -11,9 +11,19 @@ router.use(requireAuth);
 router.get("/", async (req, res) => {
   try {
     const passwords = await Password.find({ userId: req.user.id });
+    // Decrypt passwords before sending to client
+    const response = passwords.map((p) => {
+      const obj = p.toObject ? p.toObject() : { ...p };
+      obj.password =
+        typeof p.decryptPassword === "function"
+          ? p.decryptPassword()
+          : obj.password;
+      return obj;
+    });
+
     res.status(200).json({
       success: true,
-      data: passwords,
+      data: response,
       message: "Passwords fetched successfully",
     });
   } catch (error) {
@@ -56,9 +66,18 @@ router.post("/", async (req, res) => {
 
     console.log("Password saved! ID:", savedPassword._id);
 
+    // Return decrypted password in the response (DB stays encrypted)
+    const savedObj = savedPassword.toObject
+      ? savedPassword.toObject()
+      : { ...savedPassword };
+    savedObj.password =
+      typeof savedPassword.decryptPassword === "function"
+        ? savedPassword.decryptPassword()
+        : savedObj.password;
+
     res.status(201).json({
       success: true,
-      data: savedPassword,
+      data: savedObj,
       message: "Password saved successfully",
     });
   } catch (error) {
@@ -125,9 +144,25 @@ router.put("/:id", async (req, res) => {
       });
     }
 
+    // Fetch the latest document so we can run decryptPassword reliably
+    const latest = await Password.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+    const resp = latest
+      ? latest.toObject
+        ? latest.toObject()
+        : { ...latest }
+      : updated;
+    if (latest && typeof latest.decryptPassword === "function") {
+      resp.password = latest.decryptPassword();
+    } else if (updated && typeof updated.decryptPassword === "function") {
+      resp.password = updated.decryptPassword();
+    }
+
     res.status(200).json({
       success: true,
-      data: updated,
+      data: resp,
       message: "Password updated successfully",
     });
   } catch (error) {
