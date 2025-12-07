@@ -21,7 +21,7 @@ const Contact = () => {
             id: 2,
             icon: <FaGithub size={28} />,
             name: 'GitHub',
-            url: 'https://github.com/shivamkarn1',
+            url: 'https://github.com/ShivamKarna',
             color: 'hover:text-slate-800 dark:hover:text-slate-200',
             gradient: 'from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300',
             bgHover: 'hover:bg-slate-50 dark:hover:bg-slate-800',
